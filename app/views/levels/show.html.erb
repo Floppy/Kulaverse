@@ -1,21 +1,24 @@
 <script>
 
-    var camera, scene, renderer, ball, camera_direction, ball_radius;
+    var camera, scene, renderer, ball, direction, ball_radius, keyboard, action_status, action_remaining, camera_offset;
 
     init();
 	buildGeometry();
     animate();
 
     function init() {
-
+		
+		action_status = null;
 		ball_radius = 75;
+		direction = new THREE.Vector3(1,0,0);
+
+		keyboard = new THREEx.KeyboardState();
 
         scene = new THREE.Scene();
 
 		camera_offset = new THREE.Vector3(1000, -500, 0);
 
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-        camera.position.z = 1000;
         scene.add( camera );
 
         renderer = new THREE.CanvasRenderer();
@@ -53,6 +56,28 @@
 
         // note: three.js includes requestAnimationFrame shim
         requestAnimationFrame( animate );
+
+		if (action_status == null) {
+			// Detect keyboard presses unless an action is in progress
+			if (keyboard.pressed("up")) {
+				action_status = "forward";
+				action_left = 1.0;
+			}
+		}
+		else {
+			// Perform the action
+			if (action_status == "forward") {
+				action_left -= 0.1;
+				ball.position.addSelf(direction.clone().multiplyScalar(200*0.1));
+				ball.rotation.z -= 0.2;
+			}
+			if (action_left <= 0.0) {
+				action_status = null;
+			}
+		}
+
+		
+
         render();
 
     }
@@ -60,7 +85,7 @@
     function render() {
 		
 		camera.position = ball.position.clone();
-		camera.position.subSelf(camera_offset.clone());
+		camera.position.subSelf(camera_offset);
 
 		camera.lookAt( ball.position );
 
