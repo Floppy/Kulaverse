@@ -74,19 +74,19 @@
 				action_status = "forward";
 				action_left = 1.0;
 			}
-			if (keyboard.pressed("left")) {
+			else if (keyboard.pressed("left")) {
 				action_status = "turn_left";
 				action_left = 1.0;
 			}
-			if (keyboard.pressed("right")) {
+			else if (keyboard.pressed("right")) {
 				action_status = "turn_right";
 				action_left = 1.0;
 			}
-			if (keyboard.pressed("down")) {
+			else if (keyboard.pressed("down")) {
 				action_status = "turn_around";
 				action_left = 1.0;
 			}
-			if (keyboard.pressed("space")) {
+			else if (keyboard.pressed("space")) {
 				action_status = "jump";
 				action_left = 1.0;
 			}
@@ -96,7 +96,6 @@
 			if (action_status == "forward") {
 				ball.position.addSelf(player_z.clone().multiplyScalar(200*0.1));
 				ball.rotation.z -= 0.2;
-				action_left -= 0.1;
 			}
 			else if (action_status == "turn_left") {
 				angle = (Math.PI / 2.0) * 0.1;
@@ -105,7 +104,6 @@
 				r.setRotationAxis(player_y, angle);
 				player_x = r.multiplyVector3(player_x);
 				player_z = r.multiplyVector3(player_z);
-				action_left -= 0.1;
 			}
 			else if (action_status == "turn_right") {
 				angle = (Math.PI / 2.0) * 0.1;
@@ -114,7 +112,6 @@
 				r.setRotationAxis(player_y, -angle);
 				player_x = r.multiplyVector3(player_x);
 				player_z = r.multiplyVector3(player_z);
-				action_left -= 0.1;
 			}
 			else if (action_status == "turn_around") {
 				angle = (Math.PI) * 0.1;
@@ -123,12 +120,11 @@
 				r.setRotationAxis(player_y, angle);
 				player_x = r.multiplyVector3(player_x);
 				player_z = r.multiplyVector3(player_z);
-				action_left -= 0.1;
 			}
 			else if (action_status == "jump") {
 				ball.position.addSelf(player_y.clone().multiplyScalar(100*(action_left-0.5)));
-				action_left -= 0.1;
 			}
+			action_left -= 0.1;
 			if (action_left <= 0.1) {
 				action_left = 0;
 				action_status = null;
