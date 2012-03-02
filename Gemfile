@@ -25,6 +25,11 @@ gem 'jquery-rails'
 
 group :development do
   gem 'powder'
+  gem 'heroku'
+end
+
+group :production do
+  gem 'pg'
 end
 
 group :test do
