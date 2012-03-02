@@ -1,7 +1,6 @@
 <script>
 
-    var camera, scene, renderer,
-    geometry, material, mesh;
+    var camera, scene, renderer, ball, camera_direction, ball_radius;
 
     init();
 	buildGeometry();
@@ -9,7 +8,11 @@
 
     function init() {
 
+		ball_radius = 75;
+
         scene = new THREE.Scene();
+
+		camera_offset = new THREE.Vector3(1000, -500, 0);
 
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
         camera.position.z = 1000;
@@ -37,6 +40,13 @@
 			scene.add( mesh );
 		<% end %>
 
+		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
+		ball = new THREE.Mesh( geometry, material );
+		ball.position.x = -1 * block_size;
+		ball.position.y = (0 * block_size) + block_size/2 + ball_radius;
+		ball.position.z = 1 * block_size;
+		scene.add( ball );
+
 	}
 
     function animate() {
@@ -48,11 +58,11 @@
     }
 
     function render() {
+		
+		camera.position = ball.position.clone();
+		camera.position.subSelf(camera_offset.clone());
 
-		camera.position.x += 1;
-		camera.position.y += 2;
-
-		camera.lookAt( scene.position );
+		camera.lookAt( ball.position );
 
         renderer.render( scene, camera );
 
