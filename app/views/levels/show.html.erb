@@ -122,7 +122,7 @@
 				player_z = r.multiplyVector3(player_z);
 			}
 			else if (action_status == "jump") {
-				ball.position.addSelf(player_y.clone().multiplyScalar(100*(action_left-0.5)));
+				ball.position.addSelf(player_y.clone().multiplyScalar(100*(action_left-0.55)));
 			}
 			action_left -= 0.1;
 			if (action_left <= 0.1) {
