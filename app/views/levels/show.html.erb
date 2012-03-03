@@ -21,7 +21,7 @@
 
 		camera_offset = new THREE.Vector3(1000, -500, 0);
 
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 20000 );
         scene.add( camera );
 
         renderer = new THREE.WebGLRenderer();
@@ -33,8 +33,21 @@
 
 	function buildGeometry() {
 		
-		block_size = 200;
+		// Skybox
+        geometry = new THREE.CubeGeometry( -20000, -20000, -20000 );
+        sky_materials = [
+			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
+			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
+			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
+			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
+			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
+			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
+		];
+		mesh = new THREE.Mesh( geometry, sky_materials );
+		scene.add( mesh );
 
+		// Blocks
+		block_size = 200;
         geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
         block_materials = [
 			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")}),
