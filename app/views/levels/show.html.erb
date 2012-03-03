@@ -1,3 +1,5 @@
+<div id='game'>
+</div>
 <script>
 
     var camera, scene, renderer, ball, ball_radius, keyboard, action_status, action_remaining, camera_offset;
@@ -26,8 +28,9 @@
 
         renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
-
-        document.body.appendChild( renderer.domElement );
+		
+		var container = $('#game');
+        container.append( renderer.domElement );
 
     }
 
