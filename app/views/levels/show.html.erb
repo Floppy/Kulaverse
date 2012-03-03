@@ -58,9 +58,9 @@
 		ball_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/ball.png")});
 		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
 		ball = new THREE.Mesh( geometry, ball_material );
-		ball.position.x = -1 * block_size;
-		ball.position.y = (0 * block_size) + block_size/2 + ball_radius;
-		ball.position.z = 1 * block_size;
+		ball.position.x = <%=@level.start[:position][0]%> * block_size;
+		ball.position.y = (<%=@level.start[:position][1]%> * block_size) + block_size/2 + ball_radius;
+		ball.position.z = <%=@level.start[:position][2]%> * block_size;
 		scene.add( ball );
 
 	}

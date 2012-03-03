@@ -20,5 +20,12 @@ class Level < ActiveRecord::Base
       [-1,-1,0],
     ]
   end
+  
+  def start
+    {
+      :position => [-1,0,-1],
+      :orientation => [1,0,0]
+    }
+  end
 
 end
