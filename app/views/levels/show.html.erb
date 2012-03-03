@@ -37,17 +37,11 @@
 	function buildGeometry() {
 		
 		// Skybox
-        geometry = new THREE.CubeGeometry( -20000, -20000, -20000 );
-        sky_materials = [
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")}),
-		];
-		mesh = new THREE.Mesh( geometry, sky_materials );
-		scene.add( mesh );
+		sky_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")});
+		geometry = new THREE.SphereGeometry(18000, 16, 16);
+		sky = new THREE.Mesh( geometry, sky_material );
+		sky.scale.y = -1;
+		scene.add( sky );
 
 		// Blocks
 		block_size = 200;
