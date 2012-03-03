@@ -46,17 +46,9 @@
 		// Blocks
 		block_size = 200;
         geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
-        block_materials = [
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")}),
-			new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")}),
-		];
-		
+        block_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")});
 		<%= @level.blocks.each do |block_data| %>
-			mesh = new THREE.Mesh( geometry, block_materials );
+			mesh = new THREE.Mesh( geometry, [block_material,block_material,block_material,block_material,block_material,block_material] );
 			mesh.position.x = <%= block_data[0] %> * block_size;
 			mesh.position.y = <%= block_data[1] %> * block_size;
 			mesh.position.z = <%= block_data[2] %> * block_size;
