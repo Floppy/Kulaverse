@@ -11,6 +11,7 @@
 	var current_block;
 	var current_surface;
 	var debug = true;
+	var block_list = {};
 
     init();
 	buildGeometry();
@@ -40,6 +41,11 @@
 		var container = $('#game');
         container.append( renderer.domElement );
 
+		// Create block list
+		<% @level.blocks.each do |block| %>
+			block_list["<%= block[0] %>:<%= block[1] %>:<%= block[2] %>"] = [<%= block[0] %>, <%= block[1] %>, <%= block[2] %>];
+		<% end %>
+
     }
 
 	function buildGeometry() {
@@ -52,15 +58,15 @@
 		scene.add( sky );
 
 		// Blocks
-        geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
-        block_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_block %>")});
-		<%= @level.blocks.each do |block_data| %>
+		geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
+		block_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_block %>")});
+		for (var block in block_list) {
 			mesh = new THREE.Mesh( geometry, [block_material,block_material,block_material,block_material,block_material,block_material] );
-			mesh.position.x = <%= block_data[0] %> * block_size;
-			mesh.position.y = <%= block_data[1] %> * block_size;
-			mesh.position.z = <%= block_data[2] %> * block_size;
+			mesh.position.x = block_list[block][0] * block_size;
+			mesh.position.y = block_list[block][1] * block_size;
+			mesh.position.z = block_list[block][2] * block_size;
 			scene.add( mesh );
-		<% end %>
+		}
 
 		// Initialise player coordinate frame position
 		current_block = new THREE.Vector3(<%=@level.start[:position][0]%>, <%=@level.start[:position][1]%>, <%=@level.start[:position][2]%>)
