@@ -108,6 +108,16 @@
 
 	}
 
+	function isBlockAt(x,y,z) {
+		return block_list[x+":"+y+":"+z];
+	}
+	
+	function makeInteger(vector) {
+		vector.x = Math.floor(vector.x+0.5);
+		vector.y = Math.floor(vector.y+0.5);
+		vector.z = Math.floor(vector.z+0.5);
+	}
+
     function animate() {
 
         // note: three.js includes requestAnimationFrame shim
@@ -116,8 +126,38 @@
 		if (action_status == null) {
 			// Detect keyboard presses unless an action is in progress
 			if (keyboard.pressed("up")) {
-				action_status = "forward";
-				action_left = 1.0;
+				// Check if we are allowed to go forward
+				if ( isBlockAt(	current_block.x + player_z.x, 
+								current_block.y + player_z.y, 
+								current_block.z + player_z.z) && 
+ 					!isBlockAt(	current_block.x + player_z.x + player_y.x, 
+								current_block.y + player_z.y + player_y.y, 
+								current_block.z + player_z.z + player_y.z)) {
+					action_status = "forward";
+					action_left = 1.0;
+				}
+				else if ( isBlockAt(current_block.x + player_z.x + player_y.x, 
+									current_block.y + player_z.y + player_y.y, 
+									current_block.z + player_z.z + player_y.z) && 
+						 !isBlockAt(current_block.x + player_z.x + player_y.x + player_x.x,
+							 		current_block.y + player_z.y + player_y.y + player_x.y,
+									current_block.z + player_z.z + player_y.z + player_x.z) && 
+   						 !isBlockAt(current_block.x + player_z.x + player_y.x - player_x.x,
+   							 		current_block.y + player_z.y + player_y.y - player_x.y,
+   									current_block.z + player_z.z + player_y.z - player_x.z)) {
+					console.log("change_plane_up");
+				}
+				else if (!isBlockAt(current_block.x + player_z.x + player_y.x, 
+									current_block.y + player_z.y + player_y.y, 
+									current_block.z + player_z.z + player_y.z) && 
+						 !isBlockAt(current_block.x + player_x.x,
+							 		current_block.y + player_x.y,
+									current_block.z + player_x.z) && 
+   						 !isBlockAt(current_block.x - player_x.x,
+   							 		current_block.y - player_x.y,
+   									current_block.z - player_x.z)) {
+					console.log("change_plane_down");
+				}
 			}
 			else if (keyboard.pressed("left")) {
 				action_status = "turn_left";
@@ -176,6 +216,9 @@
 			if (action_left <= 0.1) {
 				action_left = 0;
 				action_status = null;
+				makeInteger(player_x);
+				makeInteger(player_y);
+				makeInteger(player_z);
 			}
 		}
 		// Update current block
