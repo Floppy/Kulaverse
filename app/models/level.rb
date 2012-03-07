@@ -28,6 +28,13 @@ class Level < ActiveRecord::Base
     }
   end
 
+  def finish
+    {
+      :object => Entity.find_by_name('Finish'),
+      :position => [1, 0, 1]
+    }
+  end
+
   def theme
     Theme.find(:first)
   end

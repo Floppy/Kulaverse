@@ -11,7 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120307142824) do
+ActiveRecord::Schema.define(:version => 20120307193136) do
+
+  create_table "entities", :force => true do |t|
+    t.string   "name"
+    t.text     "mesh"
+    t.text     "collide"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "levels", :force => true do |t|
     t.datetime "created_at", :null => false
