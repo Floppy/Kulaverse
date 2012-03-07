@@ -59,9 +59,12 @@
 
 		// Blocks
 		geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
-		block_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_block %>")});
+		texture = THREE.ImageUtils.loadTexture("<%= @level.theme.texture_block %>")
+		texture.minFilter = THREE.LinearFilter;
+		texture.magFilter = THREE.NearestFilter;
+		block_material = new THREE.MeshBasicMaterial({map: texture});
 		for (var block in block_list) {
-			mesh = new THREE.Mesh( geometry, [block_material,block_material,block_material,block_material,block_material,block_material] );
+			mesh = new THREE.Mesh( geometry, block_material );
 			mesh.position.x = block_list[block][0] * block_size;
 			mesh.position.y = block_list[block][1] * block_size;
 			mesh.position.z = block_list[block][2] * block_size;
@@ -93,7 +96,10 @@
 		mesh.position = new THREE.Vector3(<%= @level.finish[:position][0] %>, <%= @level.finish[:position][1] %>+1, <%= @level.finish[:position][2] %>);
 
 		// Ball
-		ball_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")});
+		texture = THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")
+		texture.minFilter = THREE.LinearFilter;
+		texture.magFilter = THREE.NearestFilter;
+		ball_material = new THREE.MeshBasicMaterial({map: texture});
 		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
 		ball = new THREE.Mesh( geometry, ball_material );
 		ball.position.y = block_size/2 + ball_radius;
