@@ -6,6 +6,11 @@
 	var player_x, player_y, player_z;
 	var player;
 	var block_size;
+	var highlight;
+	var surface_highlight;
+	var current_block;
+	var current_surface;
+	var debug = true;
 
     init();
 	buildGeometry();
@@ -62,6 +67,21 @@
 		current_surface = 'T';
 		player.position = current_block.clone().multiplyScalar(block_size);
 		player.rotation.y = Math.PI/2;
+
+		// Debug info
+		if (debug) {
+	        geometry = new THREE.CubeGeometry( block_size*1.01, block_size*0.1, block_size*1.01 );
+	        material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xFF0000});
+			surface_highlight = new THREE.Mesh( geometry, material );
+			scene.add( surface_highlight );
+	        geometry = new THREE.CubeGeometry( block_size*1.01, block_size*1.01, block_size*1.01 );
+	        material = new THREE.MeshBasicMaterial({wireframe: true});
+			highlight = new THREE.Mesh( geometry, material );
+			scene.add( highlight );
+			update_debug_info();
+		}
+
+		// Ball
 		ball_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")});
 		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
 		ball = new THREE.Mesh( geometry, ball_material );
@@ -147,10 +167,48 @@
 				action_status = null;
 			}
 		}
+		// Update current block
+		current_block.x = Math.floor(player.position.x + 0.5);
+		current_block.y = Math.floor(player.position.y + 0.5);
+		current_block.z = Math.floor(player.position.z + 0.5);
+		update_debug_info();
 
         render();
 
     }
+
+	function update_debug_info()
+	{
+		if (!debug)
+			return;
+		// Update highlight
+		highlight.position = current_block;
+		surface_highlight.position = current_block.clone();
+		switch (current_surface) {
+			case 'T':
+				surface_highlight.position.y += ((block_size/2)+0.05);
+				break;
+			case 'B':
+				surface_highlight.position.y -= ((block_size/2)+0.05);
+				break;
+			case 'L':
+				surface_highlight.position.x -= ((block_size/2)-0.05);
+				surface_highlight.rotation.z = Math.PI;
+				break;
+			case 'R':
+				surface_highlight.position.x += ((block_size/2)-0.05);
+				surface_highlight.rotation.z = Math.PI;
+				break;
+			case 'N':
+				surface_highlight.position.z += ((block_size/2)-0.05);
+				surface_highlight.rotation.x = Math.PI;
+				break;
+			case 'F':
+				surface_highlight.position.z -= ((block_size/2)-0.05);
+				surface_highlight.rotation.x = Math.PI;
+				break;
+		}
+	}
 
     function render() {
 		
