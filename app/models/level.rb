@@ -31,7 +31,7 @@ class Level < ActiveRecord::Base
   def finish
     {
       :object => Entity.find_by_name('Finish'),
-      :position => [1, 0, 1]
+      :position => [-1, 0, 1]
     }
   end
 
