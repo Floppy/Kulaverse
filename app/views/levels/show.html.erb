@@ -76,7 +76,7 @@
 
 		// Debug info
 		if (debug) {
-	        geometry = new THREE.CubeGeometry( block_size*1.01, block_size*0.1, block_size*1.01 );
+	        geometry = new THREE.SphereGeometry(ball_radius*1.1, 16, 16);
 	        material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xFF0000});
 			surface_highlight = new THREE.Mesh( geometry, material );
 			scene.add( surface_highlight );
@@ -109,6 +109,7 @@
 	}
 
 	function isBlockAt(x,y,z) {
+		console.log("block query "+x+","+y+","+z+": " + (block_list[x+":"+y+":"+z] != null));
 		return block_list[x+":"+y+":"+z];
 	}
 	
@@ -145,18 +146,23 @@
    						 !isBlockAt(current_block.x + player_z.x + player_y.x - player_x.x,
    							 		current_block.y + player_z.y + player_y.y - player_x.y,
    									current_block.z + player_z.z + player_y.z - player_x.z)) {
-					console.log("change_plane_up");
+					action_status = "change_plane_up";
+					action_left = 1.0;
 				}
 				else if (!isBlockAt(current_block.x + player_z.x + player_y.x, 
 									current_block.y + player_z.y + player_y.y, 
 									current_block.z + player_z.z + player_y.z) && 
+   						 !isBlockAt(current_block.x + player_z.x,
+   							 		current_block.y + player_z.y,
+   									current_block.z + player_z.z) && 
 						 !isBlockAt(current_block.x + player_x.x,
 							 		current_block.y + player_x.y,
 									current_block.z + player_x.z) && 
    						 !isBlockAt(current_block.x - player_x.x,
    							 		current_block.y - player_x.y,
    									current_block.z - player_x.z)) {
-					console.log("change_plane_down");
+					action_status = "change_plane_down";
+					action_left = 1.0;
 				}
 			}
 			else if (keyboard.pressed("left")) {
@@ -175,6 +181,8 @@
 				action_status = "jump";
 				action_left = 1.0;
 			}
+			if (action_status)
+				console.log(action_status);
 		}
 		else {
 			// Perform the action
@@ -182,31 +190,28 @@
 				player.position.addSelf(player_z.clone().multiplyScalar(block_size*0.1));
 				ball.rotation.x += 0.2;
 			}
+			else if (action_status == "change_plane_up") {
+				angle = (Math.PI / 2.0) * 0.1;
+				player.position.addSelf(player_z.clone().multiplyScalar(block_size*0.1));
+				player.position.addSelf(player_y.clone().multiplyScalar(block_size*0.1));
+				player.rotation.x -= angle;
+				ball.rotation.x += 0.1;
+			}
+			else if (action_status == "change_plane_down") {
+				angle = (Math.PI / 2.0) * 0.1;
+				player.rotation.x += angle;
+				ball.rotation.x += 0.2;
+			}
 			else if (action_status == "turn_left") {
 				angle = (Math.PI / 2.0) * 0.1;
-				r = new THREE.Matrix4();
-				r.identity();
-				r.setRotationAxis(player_y, angle);
-				player_x = r.multiplyVector3(player_x);
-				player_z = r.multiplyVector3(player_z);
 				player.rotation.y += angle;
 			}
 			else if (action_status == "turn_right") {
 				angle = (Math.PI / 2.0) * 0.1;
-				r = new THREE.Matrix4();
-				r.identity();
-				r.setRotationAxis(player_y, -angle);
-				player_x = r.multiplyVector3(player_x);
-				player_z = r.multiplyVector3(player_z);
 				player.rotation.y -= angle;
 			}
 			else if (action_status == "turn_around") {
 				angle = (Math.PI) * 0.1;
-				r = new THREE.Matrix4();
-				r.identity();
-				r.setRotationAxis(player_y, angle);
-				player_x = r.multiplyVector3(player_x);
-				player_z = r.multiplyVector3(player_z);
 				player.rotation.y -= angle;
 			}
 			else if (action_status == "jump") {
@@ -214,11 +219,57 @@
 			} 
 			action_left -= 0.1;
 			if (action_left <= 0.1) {
-				action_left = 0;
-				action_status = null;
+				// Rotate player coordinate system
+				if (action_status == "turn_left") {
+					angle = (Math.PI / 2.0);
+					r = new THREE.Matrix4();
+					r.identity();
+					r.setRotationAxis(player_y, angle);
+					player_x = r.multiplyVector3(player_x);
+					player_z = r.multiplyVector3(player_z);
+				}
+				else if (action_status == "turn_right") {
+					angle = (Math.PI / 2.0);
+					r = new THREE.Matrix4();
+					r.identity();
+					r.setRotationAxis(player_y, -angle);
+					player_x = r.multiplyVector3(player_x);
+					player_z = r.multiplyVector3(player_z);
+				}
+				else if (action_status == "turn_around") {
+					angle = Math.PI;
+					r = new THREE.Matrix4();
+					r.identity();
+					r.setRotationAxis(player_y, angle);
+					player_x = r.multiplyVector3(player_x);
+					player_z = r.multiplyVector3(player_z);
+				}
+				else if (action_status == "change_plane_up") {
+					angle = (Math.PI / 2.0);
+					r = new THREE.Matrix4();
+					r.identity();
+					r.setRotationAxis(player_x, angle);
+					player_y = r.multiplyVector3(player_y);
+					player_z = r.multiplyVector3(player_z);
+				}
+				else if (action_status == "change_plane_down") {
+					angle = (Math.PI / 2.0);
+					r = new THREE.Matrix4();
+					r.identity();
+					r.setRotationAxis(player_x, -angle);
+					player_y = r.multiplyVector3(player_y);
+					player_z = r.multiplyVector3(player_z);
+				}
+				// Round off vectors
 				makeInteger(player_x);
+				console.log("player_x: "+player_x.x+","+player_x.y+","+player_x.z);
 				makeInteger(player_y);
+				console.log("player_y: "+player_y.x+","+player_y.y+","+player_y.z);
 				makeInteger(player_z);
+				console.log("player_z: "+player_z.x+","+player_z.y+","+player_z.z);
+				// clear action status
+				action_status = null;
+				action_left = 0;
 			}
 		}
 		// Update current block
@@ -250,31 +301,7 @@
 			return;
 		// Update highlight
 		highlight.position = current_block;
-		surface_highlight.position = current_block.clone();
-		switch (current_surface) {
-			case 'T':
-				surface_highlight.position.y += ((block_size/2)+0.05);
-				break;
-			case 'B':
-				surface_highlight.position.y -= ((block_size/2)+0.05);
-				break;
-			case 'L':
-				surface_highlight.position.x -= ((block_size/2)-0.05);
-				surface_highlight.rotation.z = Math.PI;
-				break;
-			case 'R':
-				surface_highlight.position.x += ((block_size/2)-0.05);
-				surface_highlight.rotation.z = Math.PI;
-				break;
-			case 'N':
-				surface_highlight.position.z += ((block_size/2)-0.05);
-				surface_highlight.rotation.x = Math.PI;
-				break;
-			case 'F':
-				surface_highlight.position.z -= ((block_size/2)-0.05);
-				surface_highlight.rotation.x = Math.PI;
-				break;
-		}
+		surface_highlight.position = current_block.clone().addSelf(player_y.clone().multiplyScalar(0.85));
 	}
 
     function render() {
