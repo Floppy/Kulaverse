@@ -13,6 +13,6 @@ Entity.create(
     mesh = new THREE.Mesh( geometry, material );
   },
   :collide => %q{
-    alert('You Win!');
+    console.log('EXIT REACHED');
   }
 )
