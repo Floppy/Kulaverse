@@ -4,6 +4,7 @@
 
     var camera, scene, renderer, ball, ball_radius, keyboard, action_status, action_remaining, camera_offset;
 	var player_x, player_y, player_z;
+	var player;
 
     init();
 	buildGeometry();
@@ -21,10 +22,8 @@
 
         scene = new THREE.Scene();
 
-		camera_offset = new THREE.Vector3(1000, -500, 0);
-
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 20000 );
-        scene.add( camera );
+		player = new THREE.Object3D();
+		scene.add(player);
 
         renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -55,13 +54,23 @@
 			scene.add( mesh );
 		<% end %>
 
+		// Initialise player coordinate frame position
+		current_block = new THREE.Vector3(<%=@level.start[:position][0]%>, <%=@level.start[:position][1]%>, <%=@level.start[:position][2]%>)
+		current_surface = 'T';
+		player.position = current_block.clone().multiplyScalar(block_size);
+		player.rotation.y = Math.PI/2;
 		ball_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")});
 		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
 		ball = new THREE.Mesh( geometry, ball_material );
-		ball.position.x = <%=@level.start[:position][0]%> * block_size;
-		ball.position.y = (<%=@level.start[:position][1]%> * block_size) + block_size/2 + ball_radius;
-		ball.position.z = <%=@level.start[:position][2]%> * block_size;
-		scene.add( ball );
+		ball.position.y = block_size/2 + ball_radius;
+		player.add( ball );
+		
+		// Position camera
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 20000 );
+		camera.position.z = -block_size * 5;
+		camera.position.y = block_size * 2.5;
+		camera.lookAt( ball.position );
+        player.add( camera );
 
 	}
 
@@ -96,8 +105,8 @@
 		else {
 			// Perform the action
 			if (action_status == "forward") {
-				ball.position.addSelf(player_z.clone().multiplyScalar(200*0.1));
-				ball.rotation.z -= 0.2;
+				player.position.addSelf(player_z.clone().multiplyScalar(block_size*0.1));
+				ball.rotation.x += 0.2;
 			}
 			else if (action_status == "turn_left") {
 				angle = (Math.PI / 2.0) * 0.1;
@@ -106,6 +115,7 @@
 				r.setRotationAxis(player_y, angle);
 				player_x = r.multiplyVector3(player_x);
 				player_z = r.multiplyVector3(player_z);
+				player.rotation.y += angle;
 			}
 			else if (action_status == "turn_right") {
 				angle = (Math.PI / 2.0) * 0.1;
@@ -114,6 +124,7 @@
 				r.setRotationAxis(player_y, -angle);
 				player_x = r.multiplyVector3(player_x);
 				player_z = r.multiplyVector3(player_z);
+				player.rotation.y -= angle;
 			}
 			else if (action_status == "turn_around") {
 				angle = (Math.PI) * 0.1;
@@ -122,6 +133,7 @@
 				r.setRotationAxis(player_y, angle);
 				player_x = r.multiplyVector3(player_x);
 				player_z = r.multiplyVector3(player_z);
+				player.rotation.y -= angle;
 			}
 			else if (action_status == "jump") {
 				ball.position.addSelf(player_y.clone().multiplyScalar(100*(action_left-0.55)));
@@ -139,12 +151,6 @@
 
     function render() {
 		
-		// Set camera position
-		camera.position = ball.position.clone();		
-		cam_offset_z = player_z.clone().multiplyScalar(-1000);
-		cam_offset_y = player_y.clone().multiplyScalar(500);
-		camera.position.addSelf(cam_offset_z).addSelf(cam_offset_y);
-		camera.lookAt( ball.position );
 		// Render scene
         renderer.render( scene, camera );
 
