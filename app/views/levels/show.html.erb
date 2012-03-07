@@ -5,6 +5,7 @@
     var camera, scene, renderer, ball, ball_radius, keyboard, action_status, action_remaining, camera_offset;
 	var player_x, player_y, player_z;
 	var player;
+	var block_size;
 
     init();
 	buildGeometry();
@@ -13,7 +14,10 @@
     function init() {
 		
 		action_status = null;
-		ball_radius = 75;
+		
+		block_size = 1;
+		ball_radius = block_size * 0.375;
+
 		player_x = new THREE.Vector3(0,0,1);
 		player_y = new THREE.Vector3(0,1,0);
 		player_z = new THREE.Vector3(1,0,0);
@@ -43,7 +47,6 @@
 		scene.add( sky );
 
 		// Blocks
-		block_size = 200;
         geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
         block_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_block %>")});
 		<%= @level.blocks.each do |block_data| %>
@@ -136,8 +139,8 @@
 				player.rotation.y -= angle;
 			}
 			else if (action_status == "jump") {
-				ball.position.addSelf(player_y.clone().multiplyScalar(100*(action_left-0.55)));
-			}
+				ball.position.addSelf(player_y.clone().multiplyScalar((block_size/2)*(action_left-0.55)));
+			} 
 			action_left -= 0.1;
 			if (action_left <= 0.1) {
 				action_left = 0;
