@@ -28,4 +28,8 @@ class Level < ActiveRecord::Base
     }
   end
 
+  def theme
+    Theme.find(:first)
+  end
+
 end

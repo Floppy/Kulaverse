@@ -37,7 +37,7 @@
 	function buildGeometry() {
 		
 		// Skybox
-		sky_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/clouds.jpg")});
+		sky_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_sky %>")});
 		geometry = new THREE.SphereGeometry(18000, 16, 16);
 		sky = new THREE.Mesh( geometry, sky_material );
 		sky.scale.y = -1;
@@ -46,7 +46,7 @@
 		// Blocks
 		block_size = 200;
         geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
-        block_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/block.png")});
+        block_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_block %>")});
 		<%= @level.blocks.each do |block_data| %>
 			mesh = new THREE.Mesh( geometry, [block_material,block_material,block_material,block_material,block_material,block_material] );
 			mesh.position.x = <%= block_data[0] %> * block_size;
@@ -55,7 +55,7 @@
 			scene.add( mesh );
 		<% end %>
 
-		ball_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("/assets/ball.png")});
+		ball_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")});
 		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
 		ball = new THREE.Mesh( geometry, ball_material );
 		ball.position.x = <%=@level.start[:position][0]%> * block_size;
