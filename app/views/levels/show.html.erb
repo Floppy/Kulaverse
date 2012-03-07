@@ -80,6 +80,11 @@
 			scene.add( highlight );
 			update_debug_info();
 		}
+		
+		// Add Exit
+		<%= @level.finish[:object].mesh %>
+	    scene.add(mesh);
+		mesh.position = new THREE.Vector3(<%= @level.finish[:position][0] %>, <%= @level.finish[:position][1] %>+1, <%= @level.finish[:position][2] %>);
 
 		// Ball
 		ball_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")});
@@ -168,11 +173,24 @@
 			}
 		}
 		// Update current block
+		previous_block = current_block.clone();
 		current_block.x = Math.floor(player.position.x + 0.5);
 		current_block.y = Math.floor(player.position.y + 0.5);
 		current_block.z = Math.floor(player.position.z + 0.5);
 		update_debug_info();
 
+		// If block has changed
+		if (current_block.x != previous_block.x || 
+			current_block.y != previous_block.y ||
+			current_block.z != previous_block.z) {
+		    // Check for collisions
+			if (current_block.x == <%= @level.finish[:position][0] %> && 
+				current_block.y == <%= @level.finish[:position][1] %> && 
+				current_block.z == <%= @level.finish[:position][2] %>) {
+				<%= @level.finish[:object].collide %>
+			}
+		}
+		
         render();
 
     }
