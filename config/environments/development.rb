@@ -34,4 +34,8 @@ Kulaverse::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  # Set default domain for action mailer
+  config.action_mailer.default_url_options = { :host => 'kulaverse.dev' }
+
 end
