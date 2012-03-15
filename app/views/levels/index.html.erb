@@ -1,21 +1,5 @@
-<h1>Listing levels</h1>
-
-<table>
-  <tr>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<h1>Play Now!</h1>
 
 <% @levels.each do |level| %>
-  <tr>
-    <td><%= link_to 'Show', level %></td>
-    <td><%= link_to 'Edit', edit_level_path(level) %></td>
-    <td><%= link_to 'Destroy', level, confirm: 'Are you sure?', method: :delete %></td>
-  </tr>
+  <%= link_to "<i class='icon-play-circle icon-white'></i> Level #{level.id}".html_safe, level, :class => 'btn btn-success' %>
 <% end %>
-</table>
-
-<br />
-
-<%= link_to 'New Level', new_level_path %>
