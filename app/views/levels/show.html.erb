@@ -1,5 +1,19 @@
-<div id='game'>
+<div class="row-fluid">
+  <div class="span11" id='game'>
+  </div>
+  <div class="span1">
+    <p>
+		  Level: <%= @level.id %>
+    </p>
+    <p>
+		  Score: 0
+    </p>
+    <p>
+		  Keys: 0
+    </p>
+  </div>
 </div>
+
 <script>
 
     var camera, scene, renderer, ball, ball_radius, keyboard, action_status, action_remaining, camera_offset;
@@ -12,6 +26,7 @@
 	var current_surface;
 	var debug = true;
 	var block_list = {};
+	var viewport_x, viewport_y;
 
     init();
 	buildGeometry();
@@ -19,32 +34,33 @@
 
     function init() {
 		
-		action_status = null;
+			action_status = null;
 		
-		block_size = 1;
-		ball_radius = block_size * 0.375;
+			block_size = 1;
+			ball_radius = block_size * 0.375;
 
-		player_x = new THREE.Vector3(0,0,1);
-		player_y = new THREE.Vector3(0,1,0);
-		player_z = new THREE.Vector3(1,0,0);
+			player_x = new THREE.Vector3(0,0,1);
+			player_y = new THREE.Vector3(0,1,0);
+			player_z = new THREE.Vector3(1,0,0);
 
-		keyboard = new THREEx.KeyboardState();
+			keyboard = new THREEx.KeyboardState();
 
-        scene = new THREE.Scene();
+	        scene = new THREE.Scene();
 
-		player = new THREE.Object3D();
-		scene.add(player);
+			player = new THREE.Object3D();
+			scene.add(player);
 
-        renderer = new THREE.WebGLRenderer();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-		
-		var container = $('#game');
-        container.append( renderer.domElement );
+			var container = $('#game');
+	    renderer = new THREE.WebGLRenderer();
+			viewport_x = container.width();
+			viewport_y = window.innerHeight - container.position().top - 20;
+	    renderer.setSize( viewport_x, viewport_y );
+	    container.append( renderer.domElement );
 
-		// Create block list
-		<% @level.blocks.each do |block| %>
-			block_list["<%= block[0] %>:<%= block[1] %>:<%= block[2] %>"] = [<%= block[0] %>, <%= block[1] %>, <%= block[2] %>];
-		<% end %>
+			// Create block list
+			<% @level.blocks.each do |block| %>
+				block_list["<%= block[0] %>:<%= block[1] %>:<%= block[2] %>"] = [<%= block[0] %>, <%= block[1] %>, <%= block[2] %>];
+			<% end %>
 
     }
 
@@ -106,7 +122,7 @@
 		player.add( ball );
 		
 		// Position camera
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 20000 );
+        camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 1, 20000 );
 		camera.position.z = -block_size * 5;
 		camera.position.y = block_size * 2.5;
 		camera.lookAt( ball.position );
