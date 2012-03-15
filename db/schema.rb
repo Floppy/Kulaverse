@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120314195040) do
+ActiveRecord::Schema.define(:version => 20120315002251) do
 
   create_table "entities", :force => true do |t|
     t.string   "name"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(:version => 20120314195040) do
     t.integer  "twitter_id"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
+    t.integer  "facebook_id"
   end
 
   add_index "users", ["twitter_id"], :name => "index_users_on_twitter_id", :unique => true
