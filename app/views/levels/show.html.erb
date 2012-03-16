@@ -125,8 +125,7 @@
 		
 		// Position camera
         camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 1, 20000 );
-		camera.position.z = -block_size * 5;
-		camera.position.y = block_size * 2.5;
+		camera.position = ball.position.clone().addSelf(player_y.clone().multiplyScalar(2.5)).addSelf(player_z.clone().multiplyScalar(5));
 		camera.lookAt( ball.position );
         player.add( camera );
 
