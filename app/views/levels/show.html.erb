@@ -239,7 +239,7 @@
 				player.rotation.y -= angle;
 			}
 			else if (action_status == "jump") {
-				ball.position.addSelf(player_y.clone().multiplyScalar((block_size/2)*(action_left-0.55)));
+				ball.position.y += (block_size/2)*(action_left-0.55);
 			} 
 			action_left -= 0.1;
 			if (action_left <= 0.1) {
