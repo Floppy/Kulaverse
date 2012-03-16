@@ -11,6 +11,8 @@
     <p>
 		  Keys: 0
     </p>
+    <div id ='log'>
+    </div>
   </div>
 </div>
 
@@ -131,8 +133,8 @@
 	}
 
 	function isBlockAt(vector) {
-		if (debug)
-			console.log("block query "+vector.x+","+vector.y+","+vector.z+": " + (block_list[vector.x+":"+vector.y+":"+vector.z] != null));
+		 if (debug)
+		 	log("block query "+vector.x+","+vector.y+","+vector.z+": " + (block_list[vector.x+":"+vector.y+":"+vector.z] != null));
 		return block_list[vector.x+":"+vector.y+":"+vector.z];
 	}
 	
@@ -143,7 +145,7 @@
 	}
 	
 	function logVector(name, vector) {
-		console.log(name + ": " + vector.x + "," + vector.y + "," + vector.z);
+		log(name + ": " + vector.x + "," + vector.y + "," + vector.z);
 	}
 
     function animate() {
@@ -191,7 +193,7 @@
 				action_left = 1.0;
 			}
 			if (action_status && debug)
-				console.log(action_status);
+				log(action_status);
 		}
 		else {
 			// Perform the action
@@ -323,7 +325,11 @@
     }
 
 	function levelComplete() {
-		console.log("LEVEL COMPLETE");
+		log("LEVEL COMPLETE");
+	}
+	
+	function log(string) {
+		$("#log").prepend(string+'<br/>');
 	}
 
 </script>
