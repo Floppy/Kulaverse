@@ -40,10 +40,10 @@
 		
 			block_size = 1;
 			ball_radius = block_size * 0.375;
+		player_x = new THREE.Vector3(1,0,0);
+		player_y = new THREE.Vector3(0,1,0);
+		player_z = new THREE.Vector3(0,0,1);
 
-			player_x = new THREE.Vector3(0,0,1);
-			player_y = new THREE.Vector3(0,1,0);
-			player_z = new THREE.Vector3(1,0,0);
 
 			keyboard = new THREEx.KeyboardState();
 
@@ -63,6 +63,11 @@
 			<% @level.blocks.each do |block| %>
 				block_list["<%= block[0] %>:<%= block[1] %>:<%= block[2] %>"] = [<%= block[0] %>, <%= block[1] %>, <%= block[2] %>];
 			<% end %>
+		if (debug) {
+			logVector("player_x", player_x);
+			logVector("player_y", player_y);
+			logVector("player_z", player_z);
+		}
 
     }
 
@@ -93,7 +98,6 @@
 		current_block = new THREE.Vector3(<%=@level.start[:position][0]%>, <%=@level.start[:position][1]%>, <%=@level.start[:position][2]%>)
 		current_surface = 'T';
 		player.position = current_block.clone().multiplyScalar(block_size);
-		player.rotation.y = Math.PI/2;
 
 		// Debug info
 		if (debug) {
