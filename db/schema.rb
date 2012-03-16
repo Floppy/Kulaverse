@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120315154115) do
+ActiveRecord::Schema.define(:version => 20120316211526) do
 
   create_table "entities", :force => true do |t|
     t.string   "name"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20120315154115) do
   create_table "levels", :force => true do |t|
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "world_id"
   end
 
   create_table "rails_admin_histories", :force => true do |t|
@@ -64,5 +65,14 @@ ActiveRecord::Schema.define(:version => 20120315154115) do
   end
 
   add_index "users", ["twitter_id"], :name => "index_users_on_twitter_id", :unique => true
+
+  create_table "worlds", :force => true do |t|
+    t.integer  "theme_id"
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "worlds", ["theme_id"], :name => "index_worlds_on_theme_id"
 
 end

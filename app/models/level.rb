@@ -1,4 +1,7 @@
 class Level < ActiveRecord::Base
+  belongs_to :world
+
+  delegate :theme, :to => :world
 
   def blocks
     [
@@ -35,10 +38,6 @@ class Level < ActiveRecord::Base
       :object => Entity.find_by_name('Finish'),
       :position => [4, 0, 0]
     }
-  end
-
-  def theme
-    Theme.find(:first)
   end
 
 end
