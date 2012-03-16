@@ -30,6 +30,10 @@
 	var block_list = {};
 	var viewport_x, viewport_y;
 
+	// Used for rotating upwards
+	var player_y_temp = null;
+	var player_z_temp = null;
+
     init();
 	buildGeometry();
     animate();
@@ -170,6 +174,8 @@
 						 !isBlockAt(current_block.clone().addSelf(player_z).addSelf(player_y).addSelf(player_x)) && 
    						 !isBlockAt(current_block.clone().addSelf(player_z).addSelf(player_y).subSelf(player_x))) {
 					action_status = "change_plane_up";
+					player_y_temp = player_y.clone();
+					player_z_temp = player_z.clone();
 					action_left = 1.0;
 				}
 				else if (!isBlockAt(current_block.clone().addSelf(player_z).addSelf(player_y)) && 
@@ -206,10 +212,13 @@
 				ball.rotation.x += 0.2;
 			}
 			else if (action_status == "change_plane_up") {
+				// Move player frame
+				player.position.addSelf(player_z_temp.clone().multiplyScalar(block_size*0.1));
+				player.position.addSelf(player_y_temp.clone().multiplyScalar(block_size*0.1));
+				// Rotate player frame
 				angle = (Math.PI / 2.0) * 0.1;
-				player.position.addSelf(player_z.clone().multiplyScalar(block_size*0.1));
-				player.position.addSelf(player_y.clone().multiplyScalar(block_size*0.1));
 				player.rotation.x -= angle;
+				// Roll
 				ball.rotation.x += 0.1;
 			}
 			else if (action_status == "change_plane_down") {
