@@ -36,33 +36,34 @@
 
     function init() {
 		
-			action_status = null;
+		action_status = null;
 		
-			block_size = 1;
-			ball_radius = block_size * 0.375;
+		block_size = 1;
+		ball_radius = block_size * 0.375;
+
 		player_x = new THREE.Vector3(1,0,0);
 		player_y = new THREE.Vector3(0,1,0);
 		player_z = new THREE.Vector3(0,0,1);
 
+		keyboard = new THREEx.KeyboardState();
 
-			keyboard = new THREEx.KeyboardState();
+		scene = new THREE.Scene();
 
-	        scene = new THREE.Scene();
+		player = new THREE.Object3D();
+		scene.add(player);
 
-			player = new THREE.Object3D();
-			scene.add(player);
+		var container = $('#game');
+		renderer = new THREE.WebGLRenderer();
+		viewport_x = container.width();
+		viewport_y = window.innerHeight - container.position().top - 20;
+		renderer.setSize( viewport_x, viewport_y );
+		container.append( renderer.domElement );
 
-			var container = $('#game');
-	    renderer = new THREE.WebGLRenderer();
-			viewport_x = container.width();
-			viewport_y = window.innerHeight - container.position().top - 20;
-	    renderer.setSize( viewport_x, viewport_y );
-	    container.append( renderer.domElement );
+		// Create block list
+		<% @level.blocks.each do |block| %>
+			block_list["<%= block[0] %>:<%= block[1] %>:<%= block[2] %>"] = [<%= block[0] %>, <%= block[1] %>, <%= block[2] %>];
+		<% end %>
 
-			// Create block list
-			<% @level.blocks.each do |block| %>
-				block_list["<%= block[0] %>:<%= block[1] %>:<%= block[2] %>"] = [<%= block[0] %>, <%= block[1] %>, <%= block[2] %>];
-			<% end %>
 		if (debug) {
 			logVector("player_x", player_x);
 			logVector("player_y", player_y);
