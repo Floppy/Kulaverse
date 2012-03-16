@@ -270,6 +270,7 @@
 					player_y = r.multiplyVector3(player_y);
 					player_z = r.multiplyVector3(player_z);
 				}
+				update_debug_info();
 				// Round off vectors
 				makeInteger(player_x);
 				makeInteger(player_y);
@@ -289,7 +290,6 @@
 		current_block.x = Math.floor(player.position.x + 0.5);
 		current_block.y = Math.floor(player.position.y + 0.5);
 		current_block.z = Math.floor(player.position.z + 0.5);
-		update_debug_info();
 
 		// If block has changed
 		if (current_block.x != previous_block.x || 
