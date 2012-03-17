@@ -28,8 +28,8 @@ class Level < ActiveRecord::Base
   
   def start
     {
-      :position => [-1,0,-1],
-      :orientation => [1,0,0]
+      :position => [1,0,0],
+      #:orientation => [0,0,1]
     }
   end
 

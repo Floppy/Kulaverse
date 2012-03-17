@@ -19,20 +19,20 @@
 <script>
 
     var camera, scene, renderer, ball, ball_radius, keyboard, action_status, action_remaining, camera_offset;
-	var player_x, player_y, player_z;
+	var player_right, player_up, player_forward;
 	var player;
 	var block_size;
 	var highlight;
 	var surface_highlight;
 	var current_block;
 	var current_surface;
-	var debug = true;
+	var debug = false;
 	var block_list = {};
 	var viewport_x, viewport_y;
 
 	// Used for rotating upwards
-	var player_y_temp = null;
-	var player_z_temp = null;
+	var player_up_temp = null;
+	var player_forward_temp = null;
 
     init();
 	buildGeometry();
@@ -45,16 +45,18 @@
 		block_size = 1;
 		ball_radius = block_size * 0.375;
 
-		player_x = new THREE.Vector3(1,0,0);
-		player_y = new THREE.Vector3(0,1,0);
-		player_z = new THREE.Vector3(0,0,1);
+		player_right = new THREE.Vector3(1,0,0);
+		player_up = new THREE.Vector3(0,1,0);
+		player_forward = new THREE.Vector3(0,0,-1);
 
 		keyboard = new THREEx.KeyboardState();
 
 		scene = new THREE.Scene();
 
-		player = new THREE.Object3D();
-		scene.add(player);
+		player_pos = new THREE.Object3D();
+		player_rot = new THREE.Object3D();
+		player_pos.add(player_rot);
+		scene.add(player_pos);
 
 		var container = $('#game');
 		renderer = new THREE.WebGLRenderer();
@@ -69,9 +71,9 @@
 		<% end %>
 
 		if (debug) {
-			logVector("player_x", player_x);
-			logVector("player_y", player_y);
-			logVector("player_z", player_z);
+			logVector("rght", player_right);
+			logVector("up", player_up);
+			logVector("fwd", player_forward);
 		}
 
     }
@@ -102,7 +104,7 @@
 		// Initialise player coordinate frame position
 		current_block = new THREE.Vector3(<%=@level.start[:position][0]%>, <%=@level.start[:position][1]%>, <%=@level.start[:position][2]%>)
 		current_surface = 'T';
-		player.position = current_block.clone().multiplyScalar(block_size);
+		player_pos.position = current_block.clone().multiplyScalar(block_size);
 
 		// Debug info
 		if (debug) {
@@ -130,13 +132,13 @@
 		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
 		ball = new THREE.Mesh( geometry, ball_material );
 		ball.position.y = block_size/2 + ball_radius;
-		player.add( ball );
+		player_rot.add( ball );
 		
 		// Position camera
         camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 1, 20000 );
-		camera.position = ball.position.clone().addSelf(player_y.clone().multiplyScalar(2.5)).addSelf(player_z.clone().multiplyScalar(5));
+		camera.position = ball.position.clone().addSelf(player_up.clone().multiplyScalar(2.5)).addSelf(player_forward.clone().multiplyScalar(-5));
 		camera.lookAt( ball.position );
-        player.add( camera );
+        player_rot.add( camera );
 
 	}
 
@@ -156,6 +158,22 @@
 		log(name + ": " + vector.x + "," + vector.y + "," + vector.z);
 	}
 
+	function translatePlayer(vector) {
+		r = new THREE.Matrix4();
+		r.setTranslation(vector.x, vector.y, vector.z);
+		player_pos.applyMatrix(r);
+	}
+
+	function rotatePlayer(axis, angle) {
+		r = new THREE.Matrix4();
+		r.identity();
+		r.setRotationAxis(axis, angle);
+		player_right = r.multiplyVector3(player_right);
+		player_up = r.multiplyVector3(player_up);
+		player_forward = r.multiplyVector3(player_forward);
+		player_rot.applyMatrix(r);
+	}
+
     function animate() {
 
         // note: three.js includes requestAnimationFrame shim
@@ -165,23 +183,23 @@
 			// Detect keyboard presses unless an action is in progress
 			if (keyboard.pressed("up")) {
 				// Check if we are allowed to go forward
-				if ( isBlockAt(	current_block.clone().addSelf(player_z)) && 
- 					!isBlockAt(	current_block.clone().addSelf(player_z).addSelf(player_y))) {
+				if ( isBlockAt(	current_block.clone().addSelf(player_forward)) && 
+ 					!isBlockAt(	current_block.clone().addSelf(player_forward).addSelf(player_up))) {
 					action_status = "forward";
 					action_left = 1.0;
 				}
-				else if ( isBlockAt(current_block.clone().addSelf(player_z).addSelf(player_y)) && 
-						 !isBlockAt(current_block.clone().addSelf(player_z).addSelf(player_y).addSelf(player_x)) && 
-   						 !isBlockAt(current_block.clone().addSelf(player_z).addSelf(player_y).subSelf(player_x))) {
+				else if ( isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up)) && 
+						 !isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up).addSelf(player_right)) && 
+   						 !isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up).subSelf(player_right))) {
 					action_status = "change_plane_up";
-					player_y_temp = player_y.clone();
-					player_z_temp = player_z.clone();
+					player_up_temp = player_up.clone();
+					player_forward_temp = player_forward.clone();
 					action_left = 1.0;
 				}
-				else if (!isBlockAt(current_block.clone().addSelf(player_z).addSelf(player_y)) && 
-   						 !isBlockAt(current_block.clone().addSelf(player_z)) && 
-						 !isBlockAt(current_block.clone().addSelf(player_x)) && 
-   						 !isBlockAt(current_block.clone().subSelf(player_x))) {
+				else if (!isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up)) && 
+   						 !isBlockAt(current_block.clone().addSelf(player_forward)) && 
+						 !isBlockAt(current_block.clone().addSelf(player_right)) && 
+   						 !isBlockAt(current_block.clone().subSelf(player_right))) {
 					action_status = "change_plane_down";
 					action_left = 1.0;
 				}
@@ -208,91 +226,54 @@
 		else {
 			// Perform the action
 			if (action_status == "forward") {
-				player.position.addSelf(player_z.clone().multiplyScalar(block_size*0.1));
-				ball.rotation.x += 0.2;
+				translatePlayer(player_forward.clone().multiplyScalar(block_size*0.1));
+				ball.rotation.x -= 0.2;
 			}
 			else if (action_status == "change_plane_up") {
 				// Move player frame
-				player.position.addSelf(player_z_temp.clone().multiplyScalar(block_size*0.1));
-				player.position.addSelf(player_y_temp.clone().multiplyScalar(block_size*0.1));
+				translatePlayer(player_forward_temp.clone().addSelf(player_up_temp).multiplyScalar(block_size*0.1));
 				// Rotate player frame
 				angle = (Math.PI / 2.0) * 0.1;
-				player.rotation.x -= angle;
+				rotatePlayer(player_right, angle);
 				// Roll
-				ball.rotation.x += 0.1;
+				ball.rotation.x -= 0.1;
 			}
 			else if (action_status == "change_plane_down") {
-				angle = (Math.PI / 2.0) * 0.1;
-				player.rotation.x += angle;
-				ball.rotation.x += 0.2;
+				// Rotate player frame
+				angle = -(Math.PI / 2.0) * 0.1;
+				rotatePlayer(player_right, angle);
+				// Roll
+				ball.rotation.x -= 0.2;
 			}
 			else if (action_status == "turn_left") {
+				// Rotate player frame
 				angle = (Math.PI / 2.0) * 0.1;
-				player.rotation.y += angle;
+				rotatePlayer(player_up, angle);
 			}
 			else if (action_status == "turn_right") {
-				angle = (Math.PI / 2.0) * 0.1;
-				player.rotation.y -= angle;
+				// Rotate player frame
+				angle = -(Math.PI / 2.0) * 0.1;
+				rotatePlayer(player_up, angle);
 			}
 			else if (action_status == "turn_around") {
-				angle = (Math.PI) * 0.1;
-				player.rotation.y -= angle;
+				// Rotate player frame
+				angle = Math.PI * 0.1;
+				rotatePlayer(player_up, angle);
 			}
 			else if (action_status == "jump") {
 				ball.position.y += (block_size/2)*(action_left-0.55);
 			} 
 			action_left -= 0.1;
 			if (action_left <= 0.1) {
-				// Rotate player coordinate system
-				if (action_status == "turn_left") {
-					angle = (Math.PI / 2.0);
-					r = new THREE.Matrix4();
-					r.identity();
-					r.setRotationAxis(player_y, angle);
-					player_x = r.multiplyVector3(player_x);
-					player_z = r.multiplyVector3(player_z);
-				}
-				else if (action_status == "turn_right") {
-					angle = (Math.PI / 2.0);
-					r = new THREE.Matrix4();
-					r.identity();
-					r.setRotationAxis(player_y, -angle);
-					player_x = r.multiplyVector3(player_x);
-					player_z = r.multiplyVector3(player_z);
-				}
-				else if (action_status == "turn_around") {
-					angle = Math.PI;
-					r = new THREE.Matrix4();
-					r.identity();
-					r.setRotationAxis(player_y, angle);
-					player_x = r.multiplyVector3(player_x);
-					player_z = r.multiplyVector3(player_z);
-				}
-				else if (action_status == "change_plane_up") {
-					angle = (Math.PI / 2.0);
-					r = new THREE.Matrix4();
-					r.identity();
-					r.setRotationAxis(player_x, angle);
-					player_y = r.multiplyVector3(player_y);
-					player_z = r.multiplyVector3(player_z);
-				}
-				else if (action_status == "change_plane_down") {
-					angle = (Math.PI / 2.0);
-					r = new THREE.Matrix4();
-					r.identity();
-					r.setRotationAxis(player_x, -angle);
-					player_y = r.multiplyVector3(player_y);
-					player_z = r.multiplyVector3(player_z);
-				}
 				update_debug_info();
 				// Round off vectors
-				makeInteger(player_x);
-				makeInteger(player_y);
-				makeInteger(player_z);
+				makeInteger(player_right);
+				makeInteger(player_up);
+				makeInteger(player_forward);
 				if (debug) {
-					logVector("player_x", player_x);
-					logVector("player_y", player_y);
-					logVector("player_z", player_z);
+					logVector("rght", player_right);
+					logVector("up", player_up);
+					logVector("fwd", player_forward);
 				}
 				// clear action status
 				action_status = null;
@@ -301,9 +282,9 @@
 		}
 		// Update current block
 		previous_block = current_block.clone();
-		current_block.x = Math.floor(player.position.x + 0.5);
-		current_block.y = Math.floor(player.position.y + 0.5);
-		current_block.z = Math.floor(player.position.z + 0.5);
+		current_block.x = Math.floor(player_pos.position.x + 0.5);
+		current_block.y = Math.floor(player_pos.position.y + 0.5);
+		current_block.z = Math.floor(player_pos.position.z + 0.5);
 
 		// If block has changed
 		if (current_block.x != previous_block.x || 
@@ -327,7 +308,7 @@
 			return;
 		// Update highlight
 		highlight.position = current_block;
-		surface_highlight.position = current_block.clone().addSelf(player_y.clone().multiplyScalar(0.85));
+		surface_highlight.position = current_block.clone().addSelf(player_up.clone().multiplyScalar(0.85));
 	}
 
     function render() {
