@@ -43,7 +43,7 @@
 		action_status = null;
 		
 		block_size = 1;
-		ball_radius = block_size * 0.375;
+		ball_radius = block_size * 0.1;
 
 		player_right = new THREE.Vector3(1,0,0);
 		player_up = new THREE.Vector3(0,1,0);
@@ -135,9 +135,9 @@
 		player_rot.add( ball );
 		
 		// Position camera
-        camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 1, 20000 );
-		camera.position = ball.position.clone().addSelf(player_up.clone().multiplyScalar(2.5)).addSelf(player_forward.clone().multiplyScalar(-5));
-		camera.lookAt( ball.position );
+        camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 0.1, 20000 );
+		camera.position = ball.position.clone().addSelf(player_up.clone().multiplyScalar(ball_radius * 2.5)).addSelf(player_forward.clone().multiplyScalar(ball_radius * -7));
+		camera.lookAt( ball.position.clone().addSelf(player_up.clone().multiplyScalar(ball_radius * 2)) );
         player_rot.add( camera );
 
 	}
