@@ -51,3 +51,8 @@ function render() {
 	// Render scene
     renderer.render( scene, camera );
 }
+
+function addScore(value) {
+	log("scored "+value);
+	$("#score").html(parseInt($("#score").html())+value)
+}
