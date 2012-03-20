@@ -119,10 +119,12 @@
 			update_debug_info();
 		}
 		
-		// Add Exit
-		<%= @level.finish[:object].mesh %>
-	    scene.add(mesh);
-		mesh.position = new THREE.Vector3(<%= @level.finish[:position][0] %>, <%= @level.finish[:position][1] %>+1, <%= @level.finish[:position][2] %>);
+		// Add Entities
+		<% @level.entities.each do |entity| %>			
+			<%= entity[:object].mesh %>
+		    scene.add(mesh);
+			mesh.position = new THREE.Vector3(<%= entity[:position][0] %>, <%= entity[:position][1] %>+1, <%= entity[:position][2] %>);
+		<% end %>
 
 		// Ball
 		texture = THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")
@@ -259,11 +261,13 @@
 			current_block.y != previous_block.y ||
 			current_block.z != previous_block.z) {
 		    // Check for collisions
-			if (current_block.x == <%= @level.finish[:position][0] %> && 
-				current_block.y == <%= @level.finish[:position][1] %> && 
-				current_block.z == <%= @level.finish[:position][2] %>) {
-				<%= @level.finish[:object].collide %>
-			}
+			<% @level.entities.each do |entity| %>			
+				if (current_block.x == <%= entity[:position][0] %> && 
+					current_block.y == <%= entity[:position][1] %> && 
+					current_block.z == <%= entity[:position][2] %>) {
+					<%= entity[:object].collide %>
+				}
+			<% end %>
 		}
 		
         render();

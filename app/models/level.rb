@@ -33,11 +33,29 @@ class Level < ActiveRecord::Base
     }
   end
 
-  def finish
-    {
-      :object => Entity.find_by_name('Finish'),
-      :position => [4, 0, 0]
-    }
+  def entities
+    [
+      {
+        :object => Entity.find_by_name('Finish'),
+        :position => [4, 0, 0]
+      },
+      {
+        :object => Entity.find_by_name('Coin'),
+        :position => [1, 0, 1]
+      },
+      {
+        :object => Entity.find_by_name('Coin'),
+        :position => [1, 0, -1]
+      },
+      {
+        :object => Entity.find_by_name('Coin'),
+        :position => [-1, 0, 1]
+      },
+      {
+        :object => Entity.find_by_name('Coin'),
+        :position => [-1, 0, -1]
+      }
+    ]
   end
 
 end
