@@ -79,7 +79,7 @@
 		Level.addToScene(scene);
 
 		// Initialise player coordinate frame position
-		current_block = new THREE.Vector3(<%=@level.start[:position][0]%>, <%=@level.start[:position][1]%>, <%=@level.start[:position][2]%>)
+		current_block = new THREE.Vector3(<%=@level.start['position'][0]%>, <%=@level.start['position'][1]%>, <%=@level.start['position'][2]%>)
 		current_surface = 'T';
 		Player.position.position = current_block.clone().multiplyScalar(block_size);
 
@@ -97,10 +97,10 @@
 		}
 		
 		// Add Entities
-		<% @level.entities.each do |entity| %>			
-			<%= entity[:object].mesh %>
+		<% @level.entities.each do |entity| %>
+			<%= Entity.find_by_name(entity['type']).mesh %>
 		    scene.add(mesh);
-			mesh.position = new THREE.Vector3(<%= entity[:position][0] %>, <%= entity[:position][1] %>+1, <%= entity[:position][2] %>);
+			mesh.position = new THREE.Vector3(<%= entity['position'][0] %>, <%= entity['position'][1] %>+1, <%= entity['position'][2] %>);
 		<% end %>
 
 		// Ball
@@ -239,10 +239,10 @@
 			current_block.z != previous_block.z) {
 		    // Check for collisions
 			<% @level.entities.each do |entity| %>			
-				if (current_block.x == <%= entity[:position][0] %> && 
-					current_block.y == <%= entity[:position][1] %> && 
-					current_block.z == <%= entity[:position][2] %>) {
-					<%= entity[:object].collide %>
+				if (current_block.x == <%= entity['position'][0] %> && 
+					current_block.y == <%= entity['position'][1] %> && 
+					current_block.z == <%= entity['position'][2] %>) {
+					<%= Entity.find_by_name(entity['type']).collide %>
 				}
 			<% end %>
 		}
