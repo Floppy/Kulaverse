@@ -19,7 +19,6 @@
 <script>
 
     var camera, scene, renderer, ball, ball_radius, keyboard, action_status, action_remaining, camera_offset;
-	var player_right, player_up, player_forward;
 	var player;
 	var block_size;
 	var highlight;
@@ -27,7 +26,6 @@
 	var current_block;
 	var current_surface;
 	var debug = false;
-	var block_list = {};
 	var viewport_x, viewport_y;
 
 	// Used for rotating upwards
@@ -40,46 +38,36 @@
 
     function init() {
 		
+		// Set up some global variables
 		action_status = null;
-		
 		block_size = 1;
 		ball_radius = block_size * 0.1;
 
-		player_right = new THREE.Vector3(1,0,0);
-		player_up = new THREE.Vector3(0,1,0);
-		player_forward = new THREE.Vector3(0,0,-1);
-
+		// Set up keyboard input
 		keyboard = new THREEx.KeyboardState();
 
+		// Create scene
 		scene = new THREE.Scene();
 
-		player_pos = new THREE.Object3D();
-		player_rot = new THREE.Object3D();
-		player_pos.add(player_rot);
-		scene.add(player_pos);
-
-		var container = $('#game');
+		// Initialise viewport and renderer
+		var viewport = $('#game');
 		renderer = new THREE.WebGLRenderer();
-		viewport_x = container.width();
-		viewport_y = window.innerHeight - container.position().top - 20;
+		viewport_x = viewport.width();
+		viewport_y = window.innerHeight - viewport.position().top - 20;
 		renderer.setSize( viewport_x, viewport_y );
-		container.append( renderer.domElement );
+		viewport.append( renderer.domElement );
 
-		// Create block list
-		<% @level.blocks.each do |block| %>
-			block_list["<%= block[0] %>:<%= block[1] %>:<%= block[2] %>"] = [<%= block[0] %>, <%= block[1] %>, <%= block[2] %>];
-		<% end %>
-
-		if (debug) {
-			logVector("rght", player_right);
-			logVector("up", player_up);
-			logVector("fwd", player_forward);
-		}
-
+		// Initialise level data
+		Level.addBlocks(<%= @level.blocks.to_json %>);
+		Level.block_texture = "<%= @level.theme.texture_block %>";
+		
     }
 
 	function buildGeometry() {
 		
+		// Add player
+		Player.addToScene(scene);
+
 		// Skybox
 		sky_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_sky %>")});
 		geometry = new THREE.SphereGeometry(18000, 16, 16);
@@ -88,23 +76,12 @@
 		scene.add( sky );
 
 		// Blocks
-		geometry = new THREE.CubeGeometry( block_size, block_size, block_size );
-		texture = THREE.ImageUtils.loadTexture("<%= @level.theme.texture_block %>")
-		texture.minFilter = THREE.LinearFilter;
-		texture.magFilter = THREE.NearestFilter;
-		block_material = new THREE.MeshBasicMaterial({map: texture});
-		for (var block in block_list) {
-			mesh = new THREE.Mesh( geometry, block_material );
-			mesh.position.x = block_list[block][0] * block_size;
-			mesh.position.y = block_list[block][1] * block_size;
-			mesh.position.z = block_list[block][2] * block_size;
-			scene.add( mesh );
-		}
+		Level.addToScene(scene);
 
 		// Initialise player coordinate frame position
 		current_block = new THREE.Vector3(<%=@level.start[:position][0]%>, <%=@level.start[:position][1]%>, <%=@level.start[:position][2]%>)
 		current_surface = 'T';
-		player_pos.position = current_block.clone().multiplyScalar(block_size);
+		Player.position.position = current_block.clone().multiplyScalar(block_size);
 
 		// Debug info
 		if (debug) {
@@ -116,7 +93,7 @@
 	        material = new THREE.MeshBasicMaterial({wireframe: true});
 			highlight = new THREE.Mesh( geometry, material );
 			scene.add( highlight );
-			update_debug_info();
+			Utility.update_debug_info();
 		}
 		
 		// Add Entities
@@ -134,13 +111,13 @@
 		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
 		ball = new THREE.Mesh( geometry, ball_material );
 		ball.position.y = block_size/2 + ball_radius;
-		player_rot.add( ball );
+		Player.rotation.add( ball );
 		
 		// Position camera
         camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 0.1, 20000 );
-		camera.position = ball.position.clone().addSelf(player_up.clone().multiplyScalar(ball_radius * 2.5)).addSelf(player_forward.clone().multiplyScalar(ball_radius * -7));
-		camera.lookAt( ball.position.clone().addSelf(player_up.clone().multiplyScalar(ball_radius * 2)) );
-        player_rot.add( camera );
+		camera.position = ball.position.clone().addSelf(Player.up.clone().multiplyScalar(ball_radius * 2.5)).addSelf(Player.forward.clone().multiplyScalar(ball_radius * -7));
+		camera.lookAt( ball.position.clone().addSelf(Player.up.clone().multiplyScalar(ball_radius * 2)) );
+        Player.rotation.add( camera );
 
 	}
 
@@ -153,23 +130,23 @@
 			// Detect keyboard presses unless an action is in progress
 			if (keyboard.pressed("up")) {
 				// Check if we are allowed to go forward
-				if ( isBlockAt(	current_block.clone().addSelf(player_forward)) && 
- 					!isBlockAt(	current_block.clone().addSelf(player_forward).addSelf(player_up))) {
+				if ( Level.isBlockAt(	current_block.clone().addSelf(Player.forward)) && 
+ 					!Level.isBlockAt(	current_block.clone().addSelf(Player.forward).addSelf(Player.up))) {
 					action_status = "forward";
 					action_left = 1.0;
 				}
-				else if ( isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up)) && 
-						 !isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up).addSelf(player_right)) && 
-   						 !isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up).subSelf(player_right))) {
+				else if ( Level.isBlockAt(current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+						 !Level.isBlockAt(current_block.clone().addSelf(Player.forward).addSelf(Player.up).addSelf(Player.right)) && 
+   						 !Level.isBlockAt(current_block.clone().addSelf(Player.forward).addSelf(Player.up).subSelf(Player.right))) {
 					action_status = "change_plane_up";
-					player_up_temp = player_up.clone();
-					player_forward_temp = player_forward.clone();
+					player_up_temp = Player.up.clone();
+					player_forward_temp = Player.forward.clone();
 					action_left = 1.0;
 				}
-				else if (!isBlockAt(current_block.clone().addSelf(player_forward).addSelf(player_up)) && 
-   						 !isBlockAt(current_block.clone().addSelf(player_forward)) && 
-						 !isBlockAt(current_block.clone().addSelf(player_right)) && 
-   						 !isBlockAt(current_block.clone().subSelf(player_right))) {
+				else if (!Level.isBlockAt(current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+   						 !Level.isBlockAt(current_block.clone().addSelf(Player.forward)) && 
+						 !Level.isBlockAt(current_block.clone().addSelf(Player.right)) && 
+   						 !Level.isBlockAt(current_block.clone().subSelf(Player.right))) {
 					action_status = "change_plane_down";
 					action_left = 1.0;
 				}
@@ -196,54 +173,54 @@
 		else {
 			// Perform the action
 			if (action_status == "forward") {
-				translatePlayer(player_forward.clone().multiplyScalar(block_size*0.1));
+				Player.translate(Player.forward.clone().multiplyScalar(block_size*0.1));
 				ball.rotation.x -= 0.2;
 			}
 			else if (action_status == "change_plane_up") {
 				// Move player frame
-				translatePlayer(player_forward_temp.clone().addSelf(player_up_temp).multiplyScalar(block_size*0.1));
+				Player.translate(player_forward_temp.clone().addSelf(player_up_temp).multiplyScalar(block_size*0.1));
 				// Rotate player frame
 				angle = (Math.PI / 2.0) * 0.1;
-				rotatePlayer(player_right, angle);
+				Player.rotate(Player.right, angle);
 				// Roll
 				ball.rotation.x -= 0.1;
 			}
 			else if (action_status == "change_plane_down") {
 				// Rotate player frame
 				angle = -(Math.PI / 2.0) * 0.1;
-				rotatePlayer(player_right, angle);
+				Player.rotate(Player.right, angle);
 				// Roll
 				ball.rotation.x -= 0.2;
 			}
 			else if (action_status == "turn_left") {
 				// Rotate player frame
 				angle = (Math.PI / 2.0) * 0.1;
-				rotatePlayer(player_up, angle);
+				Player.rotate(Player.up, angle);
 			}
 			else if (action_status == "turn_right") {
 				// Rotate player frame
 				angle = -(Math.PI / 2.0) * 0.1;
-				rotatePlayer(player_up, angle);
+				Player.rotate(Player.up, angle);
 			}
 			else if (action_status == "turn_around") {
 				// Rotate player frame
 				angle = Math.PI * 0.1;
-				rotatePlayer(player_up, angle);
+				Player.rotate(Player.up, angle);
 			}
 			else if (action_status == "jump") {
 				ball.position.y += (block_size/2)*(action_left-0.55);
 			} 
 			action_left -= 0.1;
 			if (action_left <= 0.1) {
-				update_debug_info();
+				Utility.update_debug_info();
 				// Round off vectors
-				makeInteger(player_right);
-				makeInteger(player_up);
-				makeInteger(player_forward);
+				Utility.makeInteger(Player.right);
+				Utility.makeInteger(Player.up);
+				Utility.makeInteger(Player.forward);
 				if (debug) {
-					logVector("rght", player_right);
-					logVector("up", player_up);
-					logVector("fwd", player_forward);
+					Utility.logVector("rght", Player.right);
+					Utility.logVector("up", Player.up);
+					Utility.logVector("fwd", Player.forward);
 				}
 				// clear action status
 				action_status = null;
@@ -252,9 +229,9 @@
 		}
 		// Update current block
 		previous_block = current_block.clone();
-		current_block.x = Math.floor(player_pos.position.x + 0.5);
-		current_block.y = Math.floor(player_pos.position.y + 0.5);
-		current_block.z = Math.floor(player_pos.position.z + 0.5);
+		current_block.x = Math.floor(Player.position.position.x + 0.5);
+		current_block.y = Math.floor(Player.position.position.y + 0.5);
+		current_block.z = Math.floor(Player.position.position.z + 0.5);
 
 		// If block has changed
 		if (current_block.x != previous_block.x || 
@@ -270,7 +247,7 @@
 			<% end %>
 		}
 		
-        render();
+        Utility.render();
 
     }
 
