@@ -6,7 +6,7 @@ class Utility
 	  vector.z = Math.floor(vector.z + 0.5)
 
 	logVector: (name, vector) ->
-	  log name + ": " + vector.x + "," + vector.y + "," + vector.z
+	  this.log name + ": " + vector.x + "," + vector.y + "," + vector.z
 
 	log: (string) ->
 	  $("#log").prepend string + "<br/>"
