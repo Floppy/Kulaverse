@@ -10,9 +10,11 @@ Kulaverse::Application.routes.draw do
   end
 
   resources :worlds do
-    resources :levels
+    resources :levels do
+      resources :scores
+    end
   end
-
+  
   root :to => "worlds#show", :id => 1
 
 end
