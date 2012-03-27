@@ -1,5 +1,8 @@
 class User < ActiveRecord::Base
 
+  has_many :scores
+  has_many :completed_levels, :through => :scores, :source => :level
+
   devise :omniauthable, :registerable, :rememberable, :trackable
 
   attr_accessible :name, :twitter_id, :facebook_id, :remember_me, :avatar_url
