@@ -13,7 +13,7 @@ Entity.create(
     mesh = new THREE.Mesh( geometry, material );
   },
   :collide => %q{
-    Level.levelComplete();
+    levelComplete();
   }
 )
 
