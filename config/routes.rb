@@ -9,8 +9,10 @@ Kulaverse::Application.routes.draw do
     get 'sign_out', :to => 'users/sessions#destroy', :as => :destroy_user_session
   end
 
-  resources :levels
+  resources :worlds do
+    resources :levels
+  end
 
-  root :to => "levels#index"
+  root :to => "worlds#show", :id => 1
 
 end
