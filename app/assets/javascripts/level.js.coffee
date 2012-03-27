@@ -3,6 +3,7 @@ class Level
 	constructor: () ->
 		@block_list = {}
 		@block_texture = ""
+		@score = 0
 		
 	addBlocks: (blocks) ->
 		this.addBlock block for block in blocks
@@ -31,11 +32,9 @@ class Level
 	  Utility.log "block query #{vector.x},#{vector.y},#{vector.z}: " + (@block_list["#{vector.x}:#{vector.y}:#{vector.z}"]?)  if debug
 	  @block_list["#{vector.x}:#{vector.y}:#{vector.z}"]
 
-	levelComplete: ->
-	  Utility.log "LEVEL COMPLETE"
-
 	addScore: (value) ->
 	  Utility.log "scored " + value if debug
-	  $("#score").html parseInt($("#score").html()) + value
+	  @score += value
+	  $("#score").html @score
 
 window.Level = new Level

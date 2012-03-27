@@ -265,4 +265,14 @@
 
     }
 
+	function levelComplete() {
+	  Utility.log("LEVEL COMPLETE");
+	  jQuery.ajax('<%= world_level_scores_path(@world, @level) %>',{
+									type: 'POST',
+									data: {score: Level.score}
+								});
+	}
+
+
+
 </script>
