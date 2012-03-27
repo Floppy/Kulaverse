@@ -4,6 +4,8 @@ class Level
 		@block_list = {}
 		@block_texture = ""
 		@score = 0
+		@keys_required = 0
+		@keys_obtained = 0
 		
 	addBlocks: (blocks) ->
 		this.addBlock block for block in blocks
@@ -36,5 +38,23 @@ class Level
 	  Utility.log "scored " + value if debug
 	  @score += value
 	  $("#score").html @score
-
+	  
+	getKey: ->
+	  Utility.log "picked up key" if debug
+	  @keys_obtained += 1
+	  this.updateKeyDisplay()
+	  
+	gotAllKeys: ->
+	  @keys_obtained == @keys_required
+	  
+	updateKeyDisplay: ->
+	  Utility.log "required: #{@keys_required}" if debug
+	  Utility.log "obtained: #{@keys_obtained}" if debug
+	  html = ''
+	  for i in [0...@keys_obtained]
+		  html += '<i class="icon-ok"></i> '
+	  for i in [0...(@keys_required - @keys_obtained)]
+		  html += '<i class="icon-lock"></i> '		
+	  $("#keys").html html
+	  
 window.Level = new Level

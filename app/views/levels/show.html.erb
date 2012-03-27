@@ -9,7 +9,7 @@
 		  Score: <span id='score'>0</span>
     </p>
     <p>
-		  Keys: 0
+		  Keys: <span id='keys'></span>
     </p>
     <div id ='log'>
     </div>
@@ -107,7 +107,10 @@
 			new_entity.position = new THREE.Vector3(<%= entity['position'][0] %>, <%= entity['position'][1] %>, <%= entity['position'][2] %>);
 		  new_entity.addToScene(scene);
 			entities.push(new_entity);
+			<%= "Level.keys_required += 1;" if entity['type'] == "Key" %>
 		<% end %>
+		
+		Level.updateKeyDisplay();
 
 		// Ball
 		texture = THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")
@@ -266,11 +269,13 @@
     }
 
 	function levelComplete() {
-	  Utility.log("LEVEL COMPLETE");
-	  jQuery.ajax('<%= world_level_scores_path(@world, @level) %>',{
-									type: 'POST',
-									data: {score: Level.score}
-								});
+		if (Level.gotAllKeys() == true) {
+		  Utility.log("LEVEL COMPLETE");
+		  jQuery.ajax('<%= world_level_scores_path(@world, @level) %>',{
+										type: 'POST',
+										data: {score: Level.score}
+									});
+		}
 	}
 
 
