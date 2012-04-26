@@ -1,5 +1,9 @@
 require 'spec_helper'
 
 describe Level do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+  it 'is a test'
+    true.should be_true
+  end
+
 end
