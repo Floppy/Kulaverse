@@ -16,3 +16,4 @@
 
 config/twitter.yml
 config/facebook.yml
+/.DS_Store
