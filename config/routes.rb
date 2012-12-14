@@ -1,4 +1,5 @@
 Kulaverse::Application.routes.draw do
+
   mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
 
   devise_for :users, :controllers => { 
@@ -16,5 +17,7 @@ Kulaverse::Application.routes.draw do
   end
   
   root :to => "worlds#show", :id => 1
+
+  get "help/about"
 
 end
