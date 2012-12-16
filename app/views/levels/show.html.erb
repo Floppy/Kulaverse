@@ -42,7 +42,7 @@
 		// Set up some global variables
 		action_status = null;
 		block_size = 1;
-		ball_radius = block_size * 0.1;
+		ball_radius = block_size * 0.15;
 
 		// Set up keyboard input
 		keyboard = new THREEx.KeyboardState();
@@ -123,10 +123,10 @@
 		Player.rotation.add( ball );
 		
 		// Position camera
-        camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 0.1, 20000 );
-		camera.position = ball.position.clone().addSelf(Player.up.clone().multiplyScalar(ball_radius * 2.5)).addSelf(Player.forward.clone().multiplyScalar(ball_radius * -7));
+    camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 0.1, 20000 );
+    camera.position = ball.position.clone().addSelf(Player.up.clone().multiplyScalar(0.5)).addSelf(Player.forward.clone().multiplyScalar(-0.8));
 		camera.lookAt( ball.position.clone().addSelf(Player.up.clone().multiplyScalar(ball_radius * 2)) );
-        Player.rotation.add( camera );
+    Player.rotation.add( camera );
 
 	}
 
