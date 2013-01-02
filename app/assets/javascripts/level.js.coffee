@@ -3,6 +3,7 @@ class Level
 	constructor: () ->
 		@block_list = {}
 		@block_texture = ""
+		@sky_texture = ""
 		@score = 0
 		@keys_required = 0
 		@keys_obtained = 0
@@ -14,6 +15,12 @@ class Level
 		@block_list["#{block[0]}:#{block[1]}:#{block[2]}"] = block;
 		
 	addToScene: (scene) ->
+    # Add skybox
+		sky_material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture(@sky_texture))
+		geometry = new THREE.SphereGeometry(18000, 16, 16)
+		sky = new THREE.Mesh( geometry, sky_material )
+		sky.scale.y = -1
+		scene.add sky
 		# Create cube
 		geometry = new THREE.CubeGeometry(block_size, block_size, block_size)
 		# Set up texture

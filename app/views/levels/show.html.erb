@@ -28,6 +28,7 @@
 		// Initialise level data
 		Level.addBlocks(<%= @level.blocks.to_json %>);
 		Level.block_texture = "<%= @level.theme.texture_block %>";
+    Level.sky_texture = "<%= @level.theme.texture_sky %>";
 		
   }
 
@@ -36,14 +37,7 @@
 		// Add player
 		Player.addToScene(scene);
 
-		// Skybox
-		sky_material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("<%= @level.theme.texture_sky %>")});
-		geometry = new THREE.SphereGeometry(18000, 16, 16);
-		sky = new THREE.Mesh( geometry, sky_material );
-		sky.scale.y = -1;
-		scene.add( sky );
-
-		// Blocks
+		// Add Level
 		Level.addToScene(scene);
 
 		// Initialise player coordinate frame position
