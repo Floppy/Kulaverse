@@ -1,10 +1,7 @@
 var camera, scene, renderer, ball, ball_radius, keyboard, action_status, action_remaining, camera_offset;
-var player;
 var block_size;
 var highlight;
 var surface_highlight;
-var current_block;
-var current_surface;
 var debug = false;
 var viewport_x, viewport_y;
 var entities = [];
@@ -45,18 +42,18 @@ function animate() {
     // Detect keyboard presses unless an action is in progress
     if (keyboard.pressed("up")) {
       // Check if we are allowed to go forward
-      if (Level.isBlockAt(current_block.clone()
-        .addSelf(Player.forward)) && !Level.isBlockAt(current_block.clone()
+      if (Level.isBlockAt(Player.current_block.clone()
+        .addSelf(Player.forward)) && !Level.isBlockAt(Player.current_block.clone()
         .addSelf(Player.forward)
         .addSelf(Player.up))) {
         action_status = "forward";
         action_left = 1.0;
-      } else if (Level.isBlockAt(current_block.clone()
+      } else if (Level.isBlockAt(Player.current_block.clone()
         .addSelf(Player.forward)
-        .addSelf(Player.up)) && !Level.isBlockAt(current_block.clone()
+        .addSelf(Player.up)) && !Level.isBlockAt(Player.current_block.clone()
         .addSelf(Player.forward)
         .addSelf(Player.up)
-        .addSelf(Player.right)) && !Level.isBlockAt(current_block.clone()
+        .addSelf(Player.right)) && !Level.isBlockAt(Player.current_block.clone()
         .addSelf(Player.forward)
         .addSelf(Player.up)
         .subSelf(Player.right))) {
@@ -64,11 +61,11 @@ function animate() {
         player_up_temp = Player.up.clone();
         player_forward_temp = Player.forward.clone();
         action_left = 1.0;
-      } else if (!Level.isBlockAt(current_block.clone()
+      } else if (!Level.isBlockAt(Player.current_block.clone()
         .addSelf(Player.forward)
-        .addSelf(Player.up)) && !Level.isBlockAt(current_block.clone()
-        .addSelf(Player.forward)) && !Level.isBlockAt(current_block.clone()
-        .addSelf(Player.right)) && !Level.isBlockAt(current_block.clone()
+        .addSelf(Player.up)) && !Level.isBlockAt(Player.current_block.clone()
+        .addSelf(Player.forward)) && !Level.isBlockAt(Player.current_block.clone()
+        .addSelf(Player.right)) && !Level.isBlockAt(Player.current_block.clone()
         .subSelf(Player.right))) {
         action_status = "change_plane_down";
         action_left = 1.0;
@@ -151,16 +148,16 @@ function animate() {
   }
 
   // Update current block
-  previous_block = current_block.clone();
-  current_block.x = Math.floor(Player.position.position.x + 0.5);
-  current_block.y = Math.floor(Player.position.position.y + 0.5);
-  current_block.z = Math.floor(Player.position.position.z + 0.5);
+  previous_block = Player.current_block.clone();
+  Player.current_block.x = Math.floor(Player.position.position.x + 0.5);
+  Player.current_block.y = Math.floor(Player.position.position.y + 0.5);
+  Player.current_block.z = Math.floor(Player.position.position.z + 0.5);
 
   // If block has changed
-  if (current_block.x != previous_block.x || current_block.y != previous_block.y || current_block.z != previous_block.z) {
+  if (Player.current_block.x != previous_block.x || Player.current_block.y != previous_block.y || Player.current_block.z != previous_block.z) {
     // Check for collisions
     for (entity in entities) {
-      if (entities[entity].collide(current_block)) {
+      if (entities[entity].collide(Player.current_block)) {
         // Remove entity from array and scene
         entities[entity].removeFromScene(scene);
         entities.splice(entity, 1);

@@ -30,6 +30,9 @@
 		Level.block_texture = "<%= @level.theme.texture_block %>";
     Level.sky_texture = "<%= @level.theme.texture_sky %>";
 		
+    // Position player
+    Player.start_at(<%=@level.start['position'][0]%>, <%=@level.start['position'][1]%>, <%=@level.start['position'][2]%>);
+    
   }
 
 	function buildGeometry() {
@@ -39,11 +42,6 @@
 
 		// Add Level
 		Level.addToScene(scene);
-
-		// Initialise player coordinate frame position
-		current_block = new THREE.Vector3(<%=@level.start['position'][0]%>, <%=@level.start['position'][1]%>, <%=@level.start['position'][2]%>)
-		current_surface = 'T';
-		Player.position.position = current_block.clone().multiplyScalar(block_size);
 
 		// Debug info
 		if (debug) {
