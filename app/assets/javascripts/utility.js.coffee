@@ -12,11 +12,8 @@ class Utility
 	  $("#log").prepend string + "<br/>"
 
 	update_debug_info: ->
-	  return  unless debug
-	  highlight.position = current_block
-	  surface_highlight.position = current_block.clone().addSelf(Player.up.clone().multiplyScalar(0.85))
+	  return  unless Engine.debug
+	  Engine.highlight.position = Player.current_block
+	  Engine.surface_highlight.position = Player.current_block.clone().addSelf(Player.up.clone().multiplyScalar(0.85))
 
-	render: ->
-	  renderer.render scene, camera
-  
 window.Utility = new Utility

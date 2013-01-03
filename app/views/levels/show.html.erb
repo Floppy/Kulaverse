@@ -17,8 +17,8 @@
 </div>
 
 <script>
-
-  init();
+  
+  Engine.init();
   loadLevel();
   buildGeometry();
   animate();
@@ -38,21 +38,21 @@
 	function buildGeometry() {
 		
 		// Add player
-		Player.addToScene(scene);
+		Player.addToScene(Engine.scene);
 
 		// Add Level
-		Level.addToScene(scene);
+		Level.addToScene(Engine.scene);
 
 		// Debug info
-		if (debug) {
-	        geometry = new THREE.SphereGeometry(ball_radius*1.1, 16, 16);
-	        material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xFF0000});
-			surface_highlight = new THREE.Mesh( geometry, material );
-			scene.add( surface_highlight );
-	        geometry = new THREE.CubeGeometry( block_size*1.01, block_size*1.01, block_size*1.01 );
-	        material = new THREE.MeshBasicMaterial({wireframe: true});
-			highlight = new THREE.Mesh( geometry, material );
-			scene.add( highlight );
+		if (Engine.debug) {
+      geometry = new THREE.SphereGeometry(Engine.ball_radius*1.1, 16, 16);
+      material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xFF0000});
+			Engine.surface_highlight = new THREE.Mesh( geometry, material );
+			Engine.scene.add( Engine.surface_highlight );
+      geometry = new THREE.CubeGeometry( Engine.block_size*1.01, Engine.block_size*1.01, Engine.block_size*1.01 );
+      material = new THREE.MeshBasicMaterial({wireframe: true});
+			Engine.highlight = new THREE.Mesh( geometry, material );
+			Engine.scene.add( Engine.highlight );
 			Utility.update_debug_info();
 		}
 		
@@ -64,8 +64,8 @@
 			new_entity.collide_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).collide) %>";
 			new_entity.pickup = <%= Entity.find_by_name(entity['type']).pickup %>;
 			new_entity.position = new THREE.Vector3(<%= entity['position'][0] %>, <%= entity['position'][1] %>, <%= entity['position'][2] %>);
-		  new_entity.addToScene(scene);
-			entities.push(new_entity);
+		  new_entity.addToScene(Engine.scene);
+			Engine.entities.push(new_entity);
 			<%= "Level.keys_required += 1;" if entity['type'] == "Key" %>
 		<% end %>
 		
@@ -76,18 +76,23 @@
 		texture.minFilter = THREE.LinearFilter;
 		texture.magFilter = THREE.NearestFilter;
 		ball_material = new THREE.MeshBasicMaterial({map: texture});
-		geometry = new THREE.SphereGeometry(ball_radius, 16, 16);
-		ball = new THREE.Mesh( geometry, ball_material );
-		ball.position.y = block_size/2 + ball_radius;
-		Player.rotation.add( ball );
+		geometry = new THREE.SphereGeometry(Engine.ball_radius, 16, 16);
+		Engine.ball = new THREE.Mesh( geometry, ball_material );
+		Engine.ball.position.y = Engine.block_size/2 + Engine.ball_radius;
+		Player.rotation.add( Engine.ball );
 		
 		// Position camera
-    camera = new THREE.PerspectiveCamera( 75, viewport_x/viewport_y, 0.1, 20000 );
-    camera.position = ball.position.clone().addSelf(Player.up.clone().multiplyScalar(0.5)).addSelf(Player.forward.clone().multiplyScalar(-0.8));
-		camera.lookAt( ball.position.clone().addSelf(Player.up.clone().multiplyScalar(ball_radius * 2)) );
-    Player.rotation.add( camera );
+    Engine.camera = new THREE.PerspectiveCamera( 75, Engine.viewport_x/Engine.viewport_y, 0.1, 20000 );
+    Engine.camera.position = Engine.ball.position.clone().addSelf(Player.up.clone().multiplyScalar(0.5)).addSelf(Player.forward.clone().multiplyScalar(-0.8));
+		Engine.camera.lookAt( Engine.ball.position.clone().addSelf(Player.up.clone().multiplyScalar(Engine.ball_radius * 2)) );
+    Player.rotation.add( Engine.camera );
 
 	}
+
+  function animate() {
+		requestAnimationFrame(animate);
+    Engine.animate();
+  }
 
 	function levelComplete() {
 		if (Level.gotAllKeys() == true) {

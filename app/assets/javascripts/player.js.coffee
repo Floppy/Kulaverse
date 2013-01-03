@@ -16,7 +16,7 @@ class Player
 	start_at: (x,y,z) ->
 		# Initialise player coordinate frame position
 		@current_block = new THREE.Vector3(x,y,z)
-		@position.position = @current_block.clone().multiplyScalar(block_size)
+		@position.position = @current_block.clone().multiplyScalar(Engine.block_size)
   
 	translate: (vector) ->
 		r = new THREE.Matrix4()
