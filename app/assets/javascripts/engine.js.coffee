@@ -61,7 +61,7 @@ class Engine
 		
 		# Position camera
 		@camera = new THREE.PerspectiveCamera( 75, @viewport_x/@viewport_y, 0.1, 20000 )
-		@camera.position = @ball.position.clone().addSelf(Player.up.clone().multiplyScalar(0.5)).addSelf(Player.forward.clone().multiplyScalar(-0.8))
+		@camera.position = @ball.position.clone().addSelf(Player.up.clone().multiplyScalar(@block_size*0.5)).addSelf(Player.forward.clone().multiplyScalar(@block_size*-0.8))
 		@camera.lookAt @ball.position.clone().addSelf(Player.up.clone().multiplyScalar(@ball_radius * 2))
 		Player.rotation.add @camera
 		
