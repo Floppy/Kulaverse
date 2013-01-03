@@ -141,27 +141,27 @@ class Engine
 				@action_proportion_remaining -= action_proportion_this_frame
 		  # Action has been completed
 			if @action_proportion_remaining <= 0
-			  Utility.update_debug_info();
+			  Utility.update_debug_info()
 			  # Round off vectors
-			  Utility.makeInteger(Player.right);
-			  Utility.makeInteger(Player.up);
-			  Utility.makeInteger(Player.forward);
+			  Utility.makeInteger(Player.right)
+			  Utility.makeInteger(Player.up)
+			  Utility.makeInteger(Player.forward)
 			  if @debug
-			    Utility.logVector("rght", Player.right);
-			    Utility.logVector("up", Player.up);
-			    Utility.logVector("fwd", Player.forward);
+			    Utility.logVector("rght", Player.right)
+			    Utility.logVector("up", Player.up)
+			    Utility.logVector("fwd", Player.forward)
 			  # clear current action
 			  @current_action = null;
 
 		# Animate entities
 		for entity of @entities
-		 	@entities[entity].animate();
+		 	@entities[entity].animate()
 
 		# Update current block
-		previous_block = Player.current_block.clone();
-		Player.current_block.x = Math.floor(Player.position.position.x + 0.5);
-		Player.current_block.y = Math.floor(Player.position.position.y + 0.5);
-		Player.current_block.z = Math.floor(Player.position.position.z + 0.5);
+		previous_block = Player.current_block.clone()
+		Player.current_block.x = Math.floor(Player.position.position.x + 0.5)
+		Player.current_block.y = Math.floor(Player.position.position.y + 0.5)
+		Player.current_block.z = Math.floor(Player.position.position.z + 0.5)
 
 		# If block has changed
 		if Player.current_block.x != previous_block.x || Player.current_block.y != previous_block.y || Player.current_block.z != previous_block.z
