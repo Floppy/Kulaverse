@@ -69,31 +69,21 @@ class Engine
 		if @action_status == null
 			if @keyboard.pressed("up")
 		    # Check if we are allowed to go forward
-				if Level.isBlockAt(Player.current_block.clone()
-				  .addSelf(Player.forward)) && !Level.isBlockAt(Player.current_block.clone()
-				  .addSelf(Player.forward)
-				  .addSelf(Player.up))
+				if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up))
 		      @action_status = "forward";
 		      @action_left = 1.0;
-				else if Level.isBlockAt(Player.current_block.clone()
-					.addSelf(Player.forward)
-					.addSelf(Player.up)) && !Level.isBlockAt(Player.current_block.clone()
-					.addSelf(Player.forward)
-					.addSelf(Player.up)
-					.addSelf(Player.right)) && !Level.isBlockAt(Player.current_block.clone()
-					.addSelf(Player.forward)
-					.addSelf(Player.up)
-					.subSelf(Player.right))
+				else if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).addSelf(Player.right)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).subSelf(Player.right))
 		      @action_status = "change_plane_up";
 		      @player_up_temp = Player.up.clone();
 		      @player_forward_temp = Player.forward.clone();
 		      @action_left = 1.0;
-				else if !Level.isBlockAt(Player.current_block.clone()
-				  .addSelf(Player.forward)
-				  .addSelf(Player.up)) && !Level.isBlockAt(Player.current_block.clone()
-				  .addSelf(Player.forward)) && !Level.isBlockAt(Player.current_block.clone()
-				  .addSelf(Player.right)) && !Level.isBlockAt(Player.current_block.clone()
-				  .subSelf(Player.right))
+				else if !Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.right)) && 
+					!Level.isBlockAt(Player.current_block.clone().subSelf(Player.right))
 		      @action_status = "change_plane_down";
 		      @action_left = 1.0;
 			else if @keyboard.pressed("left")
