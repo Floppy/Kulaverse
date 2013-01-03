@@ -3,6 +3,7 @@ class Level
 	constructor: () ->
 		@block_list = {}
 		@block_texture = ""
+		@entities = []
 		@sky_texture = ""
 		@score = 0
 		@keys_required = 0
@@ -36,6 +37,11 @@ class Level
 		  mesh.position.y = @block_list[block][1] * Engine.block_size
 		  mesh.position.z = @block_list[block][2] * Engine.block_size
 		  scene.add mesh
+		# Add entities
+		for entity of @entities
+		  @entities[entity].addToScene(scene);
+		  Engine.entities.push(@entities[entity]);
+		
 			
 	isBlockAt: (vector) ->
 	  Utility.log "block query #{vector.x},#{vector.y},#{vector.z}: " + (@block_list["#{vector.x}:#{vector.y}:#{vector.z}"]?)  if Engine.debug
