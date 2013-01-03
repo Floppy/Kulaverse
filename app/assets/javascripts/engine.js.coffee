@@ -186,6 +186,11 @@ class Engine
 		for entity of @entities
 		 	@entities[entity].animate()
 
+		# Make ball breathe
+		ball_v_scale = (Math.sin(current_time/300) * 0.025);
+		@ball.scale.set(1,0.9 + ball_v_scale,1)
+		@ball.position.y = @block_size/2 + @ball_radius + (ball_v_scale*@ball_radius)
+
 		# If block has changed
 		if Player.current_block.x != previous_block.x || Player.current_block.y != previous_block.y || Player.current_block.z != previous_block.z
 		  # Check entities for collisions
