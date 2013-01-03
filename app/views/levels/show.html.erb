@@ -18,82 +18,43 @@
 
 <script>
   
-  Engine.init();
-  loadLevel();
-  buildGeometry();
-  animate();
-
-	function loadLevel() {
-
-		// Initialise level data
-		Level.addBlocks(<%= @level.blocks.to_json %>);
-		Level.block_texture = "<%= @level.theme.texture_block %>";
-    Level.sky_texture = "<%= @level.theme.texture_sky %>";
+	// Initialise level data
+	Level.addBlocks(<%= @level.blocks.to_json %>);
+	Level.block_texture = "<%= @level.theme.texture_block %>";
+  Level.sky_texture = "<%= @level.theme.texture_sky %>";
+  Level.ball_texture = "<%= @level.theme.texture_ball %>";
 		
-    // Position player
-    Player.start_at(<%=@level.start['position'][0]%>, <%=@level.start['position'][1]%>, <%=@level.start['position'][2]%>);
+  // Position player
+  Player.start_at(<%=@level.start['position'][0]%>, <%=@level.start['position'][1]%>, <%=@level.start['position'][2]%>);
     
-		// Load entities
-		<% @level.entities.each do |entity| %>
-			new_entity = new Entity();
-			new_entity.geometry_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).mesh) %>";
-			new_entity.animate_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).animate) %>";
-			new_entity.collide_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).collide) %>";
-			new_entity.pickup = <%= Entity.find_by_name(entity['type']).pickup %>;
-			new_entity.position = new THREE.Vector3(<%= entity['position'][0] %>, <%= entity['position'][1] %>, <%= entity['position'][2] %>);
-			<%= "Level.keys_required += 1;" if entity['type'] == "Key" %>
-      Level.entities.push(new_entity);
-		<% end %>
+	// Load entities
+	<% @level.entities.each do |entity| %>
+		new_entity = new Entity();
+		new_entity.geometry_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).mesh) %>";
+		new_entity.animate_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).animate) %>";
+		new_entity.collide_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).collide) %>";
+		new_entity.pickup = <%= Entity.find_by_name(entity['type']).pickup %>;
+		new_entity.position = new THREE.Vector3(<%= entity['position'][0] %>, <%= entity['position'][1] %>, <%= entity['position'][2] %>);
+		<%= "Level.keys_required += 1;" if entity['type'] == "Key" %>
+    Level.entities.push(new_entity);
+	<% end %>
 
-    // Update display now entities are loaded
-		Level.updateKeyDisplay();
+  // Update display now entities are loaded
+	Level.updateKeyDisplay();
 
-  }
+  // Set up the engine
+  Engine.init();
 
-	function buildGeometry() {
-		
-		// Add player
-		Player.addToScene(Engine.scene);
-
-		// Add Level
-		Level.addToScene(Engine.scene);
-
-		// Debug info
-		if (Engine.debug) {
-      geometry = new THREE.SphereGeometry(Engine.ball_radius*1.1, 16, 16);
-      material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xFF0000});
-			Engine.surface_highlight = new THREE.Mesh( geometry, material );
-			Engine.scene.add( Engine.surface_highlight );
-      geometry = new THREE.CubeGeometry( Engine.block_size*1.01, Engine.block_size*1.01, Engine.block_size*1.01 );
-      material = new THREE.MeshBasicMaterial({wireframe: true});
-			Engine.highlight = new THREE.Mesh( geometry, material );
-			Engine.scene.add( Engine.highlight );
-			Utility.update_debug_info();
-		}
-		
-		// Ball
-		texture = THREE.ImageUtils.loadTexture("<%= @level.theme.texture_ball %>")
-		texture.minFilter = THREE.LinearFilter;
-		texture.magFilter = THREE.NearestFilter;
-		ball_material = new THREE.MeshBasicMaterial({map: texture});
-		geometry = new THREE.SphereGeometry(Engine.ball_radius, 16, 16);
-		Engine.ball = new THREE.Mesh( geometry, ball_material );
-		Engine.ball.position.y = Engine.block_size/2 + Engine.ball_radius;
-		Player.rotation.add( Engine.ball );
-		
-		// Position camera
-    Engine.camera = new THREE.PerspectiveCamera( 75, Engine.viewport_x/Engine.viewport_y, 0.1, 20000 );
-    Engine.camera.position = Engine.ball.position.clone().addSelf(Player.up.clone().multiplyScalar(0.5)).addSelf(Player.forward.clone().multiplyScalar(-0.8));
-		Engine.camera.lookAt( Engine.ball.position.clone().addSelf(Player.up.clone().multiplyScalar(Engine.ball_radius * 2)) );
-    Player.rotation.add( Engine.camera );
-
-	}
-
+  // Animation loop
   function animate() {
 		requestAnimationFrame(animate);
     Engine.animate();
   }
 
+  // Start animation loop
+  animate();
+
+  // Level complete handler
 	function levelComplete() {
 		if (Level.gotAllKeys() == true) {
 		  Utility.log("LEVEL COMPLETE");

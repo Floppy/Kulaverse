@@ -5,6 +5,7 @@ class Level
 		@block_texture = ""
 		@entities = []
 		@sky_texture = ""
+		@ball_texture = ""
 		@score = 0
 		@keys_required = 0
 		@keys_obtained = 0

@@ -1,34 +1,69 @@
 class Engine
 	
 	constructor: () ->
-		@camera = null
-		@scene = new THREE.Scene()
-		@renderer = new THREE.WebGLRenderer()
-		@block_size = 1
-		@ball = null
-		@ball_radius = @block_size * 0.15;
-		@keyboard = new THREEx.KeyboardState()
-		@action_status = null
-		@action_remaining = null
-		@camera_offset = null
-		@highlight = null
+		@camera            = null
+		@scene             = new THREE.Scene()
+		@renderer          = new THREE.WebGLRenderer()
+		@block_size        = 1
+		@ball              = null
+		@ball_radius       = @block_size * 0.15
+		@keyboard          = new THREEx.KeyboardState()
+		@action_status     = null
+		@action_remaining  = null
+		@camera_offset     = null
+		@highlight         = null
 		@surface_highlight = null
-		@debug = false	
-		@viewport_x = null
-		@viewport_y = null
-		@entities = []
+		@debug             = false	
+		@viewport_x        = null
+		@viewport_y        = null
+		@entities          = []
 		# Used for rotating upwards
-		@player_up_temp = null
+		@player_up_temp      = null
 		@player_forward_temp = null
 
 	init: () ->
 		# Initialise viewport and renderer
-		viewport = $('#game');
-		@viewport_x = viewport.width();
-		@viewport_y = window.innerHeight - viewport.position().top - 20;
-		@renderer.setSize( @viewport_x, @viewport_y );
-		viewport.append( @renderer.domElement );
-
+		viewport    = $('#game')
+		@viewport_x = viewport.width()
+		@viewport_y = window.innerHeight - viewport.position().top - 20
+		@renderer.setSize @viewport_x, @viewport_y
+		viewport.append @renderer.domElement
+		
+		# Add scene elements
+		Player.addToScene @scene
+		Level.addToScene  @scene
+		
+		# Create ball
+		texture           = THREE.ImageUtils.loadTexture(Level.ball_texture)
+		texture.minFilter = THREE.LinearFilter
+		texture.magFilter = THREE.NearestFilter
+		ball_material     = new THREE.MeshBasicMaterial({map: texture})
+		geometry          = new THREE.SphereGeometry(@ball_radius, 16, 16)
+		@ball             = new THREE.Mesh( geometry, ball_material )
+		@ball.position.y  = @block_size/2 + @ball_radius
+		Player.rotation.add @ball
+		
+		# Debug info
+		if @debug
+			# Current surface (shown as wireframe ball)
+			geometry = new THREE.SphereGeometry(@ball_radius*1.1, 16, 16)
+			material = new THREE.MeshBasicMaterial({wireframe: true, color: 0xFF0000})
+			@surface_highlight = new THREE.Mesh( geometry, material )
+			@scene.add @surface_highlight
+			# Current block
+			geometry = new THREE.CubeGeometry( @block_size*1.01, @block_size*1.01, @block_size*1.01 )
+			material = new THREE.MeshBasicMaterial({wireframe: true})
+			@highlight = new THREE.Mesh( geometry, material )
+			@scene.add @highlight
+			# Update
+			Utility.update_debug_info()
+		
+		# Position camera
+		@camera = new THREE.PerspectiveCamera( 75, @viewport_x/@viewport_y, 0.1, 20000 )
+		@camera.position = @ball.position.clone().addSelf(Player.up.clone().multiplyScalar(0.5)).addSelf(Player.forward.clone().multiplyScalar(-0.8))
+		@camera.lookAt @ball.position.clone().addSelf(Player.up.clone().multiplyScalar(@ball_radius * 2))
+		Player.rotation.add @camera
+		
 	animate: () ->
 		# Detect keyboard presses unless an action is in progress		
 		if @action_status == null
