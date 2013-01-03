@@ -65,12 +65,7 @@ class Engine
 		@camera.lookAt @ball.position.clone().addSelf(Player.up.clone().multiplyScalar(@ball_radius * 2))
 		Player.rotation.add @camera
 		
-	animate: () ->
-		# Get elapsed time since last frame
-		current_time = new Date().getTime();
-		@ms_since_last_frame = current_time - @last_frame_time;
-		@last_frame_time= current_time;
-
+	executeActions: () ->
 		if @current_action
 			# Work out how much of the action to perform this frame
 			action_proportion_this_frame = @ms_since_last_frame / 250
@@ -130,29 +125,8 @@ class Engine
 			    Utility.logVector("fwd", Player.forward)
 			  # clear current action
 			  @current_action = null;
-
-		# Animate entities
-		for entity of @entities
-		 	@entities[entity].animate()
-
-		# Update current block
-		previous_block = Player.current_block.clone()
-		Player.current_block.x = Math.floor(Player.position.position.x + 0.5)
-		Player.current_block.y = Math.floor(Player.position.position.y + 0.5)
-		Player.current_block.z = Math.floor(Player.position.position.z + 0.5)
-
-		# If block has changed
-		if Player.current_block.x != previous_block.x || Player.current_block.y != previous_block.y || Player.current_block.z != previous_block.z
-		  # Check for collisions
-		  for entity of @entities
-		    if @entities[entity].collide(Player.current_block)
-		      # Remove entity from array and scene
-		      @entities[entity].removeFromScene(@scene);
-		      @entities.splice(entity, 1);
-		      # Adjust counter for removed item
-		      entity -= 1;
-
-		# Detect keyboard presses unless an action is still in progress		
+						
+	detectUserInput: () ->
 		if @current_action == null
 			# Move forward
 			if @keyboard.pressed("up")
@@ -191,7 +165,41 @@ class Engine
 			if @current_action
 				@action_proportion_remaining = 1.0;
 				if @debug
-					Utility.log(@current_action);
+					Utility.log(@current_action);				
+	
+	animate: () ->
+		# Get elapsed time since last frame
+		current_time = new Date().getTime();
+		@ms_since_last_frame = current_time - @last_frame_time;
+		@last_frame_time= current_time;
+
+		# Run current action if any
+		this.executeActions()
+
+		# Update current block
+		previous_block = Player.current_block.clone()
+		Player.current_block.x = Math.floor(Player.position.position.x + 0.5)
+		Player.current_block.y = Math.floor(Player.position.position.y + 0.5)
+		Player.current_block.z = Math.floor(Player.position.position.z + 0.5)
+
+		# Animate entities
+		for entity of @entities
+		 	@entities[entity].animate()
+
+		# If block has changed
+		if Player.current_block.x != previous_block.x || Player.current_block.y != previous_block.y || Player.current_block.z != previous_block.z
+		  # Check entities for collisions
+		  for entity of @entities
+				# collide will return true if we should remove the collided-with object and carry on
+		    if @entities[entity].collide(Player.current_block)
+		      # Remove entity from array and scene
+		      @entities[entity].removeFromScene(@scene);
+		      @entities.splice(entity, 1);
+		      # Adjust counter for removed item
+		      entity -= 1;
+
+		# Detect keyboard presses
+		this.detectUserInput()
 
 		# Render
 		@renderer.render @scene, @camera
