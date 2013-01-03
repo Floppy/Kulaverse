@@ -111,59 +111,57 @@ class Engine
 			if @action_status && @debug
 				Utility.log(@action_status);
 		else
-		  # Step 10% per frame
-		  actionStep = 0.1
+			# Step 10% per frame
+			actionStep = 0.1
 		  # Perform the action
-		  if @action_status == "forward"
-		    Player.translate(Player.forward.clone()
-		      .multiplyScalar(@block_size * actionStep));
-		    @ball.rotation.x -= @ball_radius;
-		  else if @action_status == "change_plane_up"
-		    # Move player frame
-		    Player.translate(@player_forward_temp.clone()
-		      .addSelf(@player_up_temp)
-		      .multiplyScalar(@block_size * actionStep));
-		    # Rotate player frame
-		    angle = (Math.PI / 2.0) * actionStep;
-		    Player.rotate(Player.right, angle);
-		    # Roll
-		    @ball.rotation.x -= @ball_radius / 2;
-		  else if @action_status == "change_plane_down"
-		    # Rotate player frame
-		    angle = -(Math.PI / 2.0) * actionStep;
-		    Player.rotate(Player.right, angle);
-		    # Roll
-		    @ball.rotation.x -= @ball_radius;
-		  else if @action_status == "turn_left"
-		    # Rotate player frame
-		    angle = (Math.PI / 2.0) * actionStep;
-		    Player.rotate(Player.up, angle);
-		  else if @action_status == "turn_right"
-		    # Rotate player frame
-		    angle = -(Math.PI / 2.0) * actionStep;
-		    Player.rotate(Player.up, angle);
-		  else if @action_status == "turn_around"
-		    # Rotate player frame
-		    angle = Math.PI * actionStep;
-		    Player.rotate(Player.up, angle);
-		  else if @action_status == "jump"
-		    @ball.position.y += (@block_size / 2) * (@action_left - 0.55);
+			switch @action_status
+				when "forward"
+					Player.translate(Player.forward.clone().multiplyScalar(@block_size * actionStep))
+					@ball.rotation.x -= @ball_radius;
+				when "change_plane_up"
+				  # Move player frame
+					Player.translate(@player_forward_temp.clone().addSelf(@player_up_temp).multiplyScalar(@block_size * actionStep))
+				  # Rotate player frame
+					angle = (Math.PI / 2.0) * actionStep
+					Player.rotate(Player.right, angle)
+				  # Roll
+					@ball.rotation.x -= @ball_radius / 2
+				when "change_plane_down"
+				  # Rotate player frame
+					angle = -(Math.PI / 2.0) * actionStep
+					Player.rotate(Player.right, angle)
+				  # Roll
+					@ball.rotation.x -= @ball_radius
+				when "turn_left"
+				  # Rotate player frame
+					angle = (Math.PI / 2.0) * actionStep
+					Player.rotate(Player.up, angle)
+				when "turn_right"
+				  # Rotate player frame
+					angle = -(Math.PI / 2.0) * actionStep
+					Player.rotate(Player.up, angle)
+				when "turn_around"
+				  # Rotate player frame
+					angle = Math.PI * actionStep
+					Player.rotate(Player.up, angle)
+				when "jump"
+					@ball.position.y += (@block_size / 2) * (@action_left - 0.55)
 			# Decrement action step
-		  @action_left -= actionStep;
+			@action_left -= actionStep
 		  # If this is the end
-		  if @action_left <= actionStep
-		    Utility.update_debug_info();
-		    # Round off vectors
-		    Utility.makeInteger(Player.right);
-		    Utility.makeInteger(Player.up);
-		    Utility.makeInteger(Player.forward);
-		    if @debug
-		      Utility.logVector("rght", Player.right);
-		      Utility.logVector("up", Player.up);
-		      Utility.logVector("fwd", Player.forward);
-		    # clear action status
-		    @action_status = null;
-		    @action_left = 0;
+			if @action_left <= actionStep
+			  Utility.update_debug_info();
+			  # Round off vectors
+			  Utility.makeInteger(Player.right);
+			  Utility.makeInteger(Player.up);
+			  Utility.makeInteger(Player.forward);
+			  if @debug
+			    Utility.logVector("rght", Player.right);
+			    Utility.logVector("up", Player.up);
+			    Utility.logVector("fwd", Player.forward);
+			  # clear action status
+			  @action_status = null;
+			  @action_left = 0;
 
 		# Animate entities
 		for entity of @entities
