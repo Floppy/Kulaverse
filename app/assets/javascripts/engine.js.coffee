@@ -65,39 +65,7 @@ class Engine
 		Player.rotation.add @camera
 		
 	animate: () ->
-		# Detect keyboard presses unless an action is in progress		
-		if @current_action == null
-			if @keyboard.pressed("up")
-		    # Check if we are allowed to go forward
-				if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up))
-		      @current_action = "forward";
-				else if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).addSelf(Player.right)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).subSelf(Player.right))
-		      @current_action = "change_plane_up";
-		      @player_up_temp = Player.up.clone();
-		      @player_forward_temp = Player.forward.clone();
-				else if !Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.right)) && 
-					!Level.isBlockAt(Player.current_block.clone().subSelf(Player.right))
-		      @current_action = "change_plane_down";
-			else if @keyboard.pressed("left")
-			  @current_action = "turn_left";
-			else if @keyboard.pressed("right")
-			  @current_action = "turn_right";
-			else if @keyboard.pressed("down")
-			  @current_action = "turn_around";
-			else if @keyboard.pressed("space")
-			  @current_action = "jump";
-			# Initialise action remaining counter
-			if @current_action
-				@action_proportion_remaining = 1.0;
-				if @debug
-					Utility.log(@current_action);
-					
-		else
+		if @current_action
 			# Work out how much of the action to perform this frame
 			action_proportion_this_frame = 0.1 # this should be based on frame rate
 			if @action_proportion_remaining < action_proportion_this_frame
@@ -173,6 +141,38 @@ class Engine
 		      @entities.splice(entity, 1);
 		      # Adjust counter for removed item
 		      entity -= 1;
+
+		# Detect keyboard presses unless an action is still in progress		
+		if @current_action == null
+			if @keyboard.pressed("up")
+		    # Check if we are allowed to go forward
+				if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up))
+		      @current_action = "forward";
+				else if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).addSelf(Player.right)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).subSelf(Player.right))
+		      @current_action = "change_plane_up";
+		      @player_up_temp = Player.up.clone();
+		      @player_forward_temp = Player.forward.clone();
+				else if !Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
+					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.right)) && 
+					!Level.isBlockAt(Player.current_block.clone().subSelf(Player.right))
+		      @current_action = "change_plane_down";
+			else if @keyboard.pressed("left")
+			  @current_action = "turn_left";
+			else if @keyboard.pressed("right")
+			  @current_action = "turn_right";
+			else if @keyboard.pressed("down")
+			  @current_action = "turn_around";
+			else if @keyboard.pressed("space")
+			  @current_action = "jump";
+			# Initialise action remaining counter
+			if @current_action
+				@action_proportion_remaining = 1.0;
+				if @debug
+					Utility.log(@current_action);
 
 		# Render
 		@renderer.render @scene, @camera
