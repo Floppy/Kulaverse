@@ -110,7 +110,11 @@ class Engine
 						angle = Math.PI * action_proportion_this_frame
 						Player.rotate(Player.up, angle)
 					when "jump"
-						@ball.position.y += (@block_size / 2) * (@action_proportion_remaining - 0.55)
+						@ball.position.y += (@block_size / 2) * (@action_proportion_remaining - 0.5)
+					when "jump_forward"
+						Player.translate(Player.forward.clone().multiplyScalar(@block_size * 2 * action_proportion_this_frame))
+						@ball.rotation.x -= @ball_radius;
+						@ball.position.y += (@block_size / 2) * (@action_proportion_remaining - 0.5)
 				# Decrement action step
 				@action_proportion_remaining -= action_proportion_this_frame
 		  # Action has been completed
@@ -150,28 +154,37 @@ class Engine
 
 		# Detect keyboard presses unless an action is still in progress		
 		if @current_action == null
+			# Move forward
 			if @keyboard.pressed("up")
-		    # Check if we are allowed to go forward
-				if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up))
-		      @current_action = "forward";
-				else if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).addSelf(Player.right)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).subSelf(Player.right))
-		      @current_action = "change_plane_up";
-		      @player_up_temp = Player.up.clone();
-		      @player_forward_temp = Player.forward.clone();
-				else if !Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
-					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.right)) && 
-					!Level.isBlockAt(Player.current_block.clone().subSelf(Player.right))
-		      @current_action = "change_plane_down";
+				# Are we jumping forward?
+				if @keyboard.pressed("space")
+					@current_action = "jump_forward"
+				else
+			    # Check if we are allowed to go forward
+					if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
+						!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up))
+			      @current_action = "forward";
+					else if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+						!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).addSelf(Player.right)) && 
+						!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).subSelf(Player.right))
+			      @current_action = "change_plane_up";
+			      @player_up_temp = Player.up.clone();
+			      @player_forward_temp = Player.forward.clone();
+					else if !Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
+						!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
+						!Level.isBlockAt(Player.current_block.clone().addSelf(Player.right)) && 
+						!Level.isBlockAt(Player.current_block.clone().subSelf(Player.right))
+			      @current_action = "change_plane_down";
+			# Turn left
 			else if @keyboard.pressed("left")
 			  @current_action = "turn_left";
+			# Turn right
 			else if @keyboard.pressed("right")
 			  @current_action = "turn_right";
+			# Turn around
 			else if @keyboard.pressed("down")
 			  @current_action = "turn_around";
+			# Jump in place
 			else if @keyboard.pressed("space")
 			  @current_action = "jump";
 			# Initialise action remaining counter
