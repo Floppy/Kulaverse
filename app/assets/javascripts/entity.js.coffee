@@ -6,6 +6,8 @@ class Entity
 		@collide_code = ""
 		@object = null
 		@position = new THREE.Vector3(0,0,0)
+		@frame = new THREE.Object3D()
+		@surface = "+Y"
 		@pickup = false
 	
 	addToScene: (scene) ->
@@ -14,23 +16,39 @@ class Entity
 		# Create mesh object
 		@object = new THREE.Mesh( geometry, material );
 		# Add to scene
-		scene.add @object
-		# Set position
-		@object.position = @position.clone();
-		@object.position.y += 0.75; # Move entites above block, for now, until we have proper idea of which surface it's on.
+		@frame.add @object
+		scene.add @frame
+		# Set frame
+		@frame.position = @position.clone();
+		# Rotate frame
+		switch @surface
+			when "+X"
+				@frame.rotation.z = Math.PI;
+			when "-X"
+				@frame.rotation.z = -Math.PI;
+			when "+Y"
+				null
+			when "-Y"
+				@frame.rotation.x = Math.PI;
+			when "+Z"
+				@frame.rotation.x = Math.PI/2;
+			when "-Z"
+				@frame.rotation.x = -Math.PI/2;
+		# Lift entity out of block
+		@object.position.y += 0.75;
 
 	animate: () ->
 		eval @animate_code
 		
 	# should return true if the object is to be removed from the world
-	collide: (player) ->
-		if player.equals(@position)
+	collide: (position, surface) ->
+		if position.equals(@position) && surface == @surface
 			eval @collide_code
 			# Return whether this item is a pickup or not
 			return @pickup
 		return false
 
 	removeFromScene: (scene) ->
-		scene.remove @object
+		scene.remove @frame
 
 window.Entity = Entity

@@ -34,6 +34,7 @@
 		new_entity.animate_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).animate) %>";
 		new_entity.collide_code = "<%= escape_javascript(Entity.find_by_name(entity['type']).collide) %>";
 		new_entity.pickup = <%= Entity.find_by_name(entity['type']).pickup %>;
+		new_entity.surface = "<%= entity['surface'] %>";
 		new_entity.position = new THREE.Vector3(<%= entity['position'][0] %>, <%= entity['position'][1] %>, <%= entity['position'][2] %>);
 		<%= "Level.keys_required += 1;" if entity['type'] == "Key" %>
     Level.entities.push(new_entity);

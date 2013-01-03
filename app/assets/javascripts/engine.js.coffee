@@ -176,11 +176,8 @@ class Engine
 		# Run current action if any
 		this.executeActions()
 
-		# Update current block
-		previous_block = Player.current_block.clone()
-		Player.current_block.x = Math.floor(Player.position.position.x + 0.5)
-		Player.current_block.y = Math.floor(Player.position.position.y + 0.5)
-		Player.current_block.z = Math.floor(Player.position.position.z + 0.5)
+		# Update player position
+		Player.updateCurrentPosition()
 
 		# Animate entities
 		for entity of @entities
@@ -191,17 +188,15 @@ class Engine
 		@ball.scale.set(1,0.9 + ball_v_scale,1)
 		@ball.position.y = @block_size/2 + @ball_radius + (ball_v_scale*@ball_radius)
 
-		# If block has changed
-		if Player.current_block.x != previous_block.x || Player.current_block.y != previous_block.y || Player.current_block.z != previous_block.z
-		  # Check entities for collisions
-		  for entity of @entities
-				# collide will return true if we should remove the collided-with object and carry on
-		    if @entities[entity].collide(Player.current_block)
-		      # Remove entity from array and scene
-		      @entities[entity].removeFromScene(@scene);
-		      @entities.splice(entity, 1);
-		      # Adjust counter for removed item
-		      entity -= 1;
+		# Check all entities for collisions
+		for entity of @entities
+			# collide will return true if we should remove the collided-with object and carry on
+			if @entities[entity].collide(Player.current_block, Player.current_surface)
+				# Remove entity from array and scene
+				@entities[entity].removeFromScene(@scene);
+				@entities.splice(entity, 1);
+				# Adjust counter for removed item
+				entity -= 1;
 
 		# Detect keyboard presses
 		this.detectUserInput()
