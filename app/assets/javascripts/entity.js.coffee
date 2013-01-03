@@ -23,9 +23,9 @@ class Entity
 		# Rotate frame
 		switch @surface
 			when "+X"
-				@frame.rotation.z = Math.PI;
+				@frame.rotation.z = -Math.PI/2;
 			when "-X"
-				@frame.rotation.z = -Math.PI;
+				@frame.rotation.z = Math.PI/2;
 			when "+Y"
 				null
 			when "-Y"
