@@ -1,6 +1,7 @@
 class Engine
 	
 	constructor: () ->
+		@last_frame_time   = null
 		@camera            = null
 		@scene             = new THREE.Scene()
 		@renderer          = new THREE.WebGLRenderer()
@@ -65,9 +66,14 @@ class Engine
 		Player.rotation.add @camera
 		
 	animate: () ->
+		# Get elapsed time since last frame
+		current_time = new Date().getTime();
+		@ms_since_last_frame = current_time - @last_frame_time;
+		@last_frame_time= current_time;
+
 		if @current_action
 			# Work out how much of the action to perform this frame
-			action_proportion_this_frame = 0.1 # this should be based on frame rate
+			action_proportion_this_frame = @ms_since_last_frame / 250
 			if @action_proportion_remaining < action_proportion_this_frame
 				action_proportion_this_frame = @action_proportion_remaining
 			# If there is still anything to do:
