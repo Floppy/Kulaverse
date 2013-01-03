@@ -8,7 +8,7 @@ class Engine
 		@ball              = null
 		@ball_radius       = @block_size * 0.15
 		@keyboard          = new THREEx.KeyboardState()
-		@action_status     = null
+		@current_action     = null
 		@action_remaining  = null
 		@camera_offset     = null
 		@highlight         = null
@@ -66,80 +66,81 @@ class Engine
 		
 	animate: () ->
 		# Detect keyboard presses unless an action is in progress		
-		if @action_status == null
+		if @current_action == null
 			if @keyboard.pressed("up")
 		    # Check if we are allowed to go forward
 				if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
 					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up))
-		      @action_status = "forward";
-		      @action_left = 1.0;
+		      @current_action = "forward";
 				else if Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
 					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).addSelf(Player.right)) && 
 					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up).subSelf(Player.right))
-		      @action_status = "change_plane_up";
+		      @current_action = "change_plane_up";
 		      @player_up_temp = Player.up.clone();
 		      @player_forward_temp = Player.forward.clone();
-		      @action_left = 1.0;
 				else if !Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward).addSelf(Player.up)) && 
 					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.forward)) && 
 					!Level.isBlockAt(Player.current_block.clone().addSelf(Player.right)) && 
 					!Level.isBlockAt(Player.current_block.clone().subSelf(Player.right))
-		      @action_status = "change_plane_down";
-		      @action_left = 1.0;
+		      @current_action = "change_plane_down";
 			else if @keyboard.pressed("left")
-			  @action_status = "turn_left";
-			  @action_left = 1.0;
+			  @current_action = "turn_left";
 			else if @keyboard.pressed("right")
-			  @action_status = "turn_right";
-			  @action_left = 1.0;
+			  @current_action = "turn_right";
 			else if @keyboard.pressed("down")
-			  @action_status = "turn_around";
-			  @action_left = 1.0;
+			  @current_action = "turn_around";
 			else if @keyboard.pressed("space")
-			  @action_status = "jump";
-			  @action_left = 1.0;
-			if @action_status && @debug
-				Utility.log(@action_status);
+			  @current_action = "jump";
+			# Initialise action remaining counter
+			if @current_action
+				@action_proportion_remaining = 1.0;
+				if @debug
+					Utility.log(@current_action);
+					
 		else
-			# Step 10% per frame
-			actionStep = 0.1
-		  # Perform the action
-			switch @action_status
-				when "forward"
-					Player.translate(Player.forward.clone().multiplyScalar(@block_size * actionStep))
-					@ball.rotation.x -= @ball_radius;
-				when "change_plane_up"
-				  # Move player frame
-					Player.translate(@player_forward_temp.clone().addSelf(@player_up_temp).multiplyScalar(@block_size * actionStep))
-				  # Rotate player frame
-					angle = (Math.PI / 2.0) * actionStep
-					Player.rotate(Player.right, angle)
-				  # Roll
-					@ball.rotation.x -= @ball_radius / 2
-				when "change_plane_down"
-				  # Rotate player frame
-					angle = -(Math.PI / 2.0) * actionStep
-					Player.rotate(Player.right, angle)
-				  # Roll
-					@ball.rotation.x -= @ball_radius
-				when "turn_left"
-				  # Rotate player frame
-					angle = (Math.PI / 2.0) * actionStep
-					Player.rotate(Player.up, angle)
-				when "turn_right"
-				  # Rotate player frame
-					angle = -(Math.PI / 2.0) * actionStep
-					Player.rotate(Player.up, angle)
-				when "turn_around"
-				  # Rotate player frame
-					angle = Math.PI * actionStep
-					Player.rotate(Player.up, angle)
-				when "jump"
-					@ball.position.y += (@block_size / 2) * (@action_left - 0.55)
-			# Decrement action step
-			@action_left -= actionStep
-		  # If this is the end
-			if @action_left <= actionStep
+			# Work out how much of the action to perform this frame
+			action_proportion_this_frame = 0.1 # this should be based on frame rate
+			if @action_proportion_remaining < action_proportion_this_frame
+				action_proportion_this_frame = @action_proportion_remaining
+			# If there is still anything to do:
+			if action_proportion_this_frame > 0
+			  # Perform the action
+				switch @current_action
+					when "forward"
+						Player.translate(Player.forward.clone().multiplyScalar(@block_size * action_proportion_this_frame))
+						@ball.rotation.x -= @ball_radius;
+					when "change_plane_up"
+					  # Move player frame
+						Player.translate(@player_forward_temp.clone().addSelf(@player_up_temp).multiplyScalar(@block_size * action_proportion_this_frame))
+					  # Rotate player frame
+						angle = (Math.PI / 2.0) * action_proportion_this_frame
+						Player.rotate(Player.right, angle)
+					  # Roll
+						@ball.rotation.x -= @ball_radius / 2
+					when "change_plane_down"
+					  # Rotate player frame
+						angle = -(Math.PI / 2.0) * action_proportion_this_frame
+						Player.rotate(Player.right, angle)
+					  # Roll
+						@ball.rotation.x -= @ball_radius
+					when "turn_left"
+					  # Rotate player frame
+						angle = (Math.PI / 2.0) * action_proportion_this_frame
+						Player.rotate(Player.up, angle)
+					when "turn_right"
+					  # Rotate player frame
+						angle = -(Math.PI / 2.0) * action_proportion_this_frame
+						Player.rotate(Player.up, angle)
+					when "turn_around"
+					  # Rotate player frame
+						angle = Math.PI * action_proportion_this_frame
+						Player.rotate(Player.up, angle)
+					when "jump"
+						@ball.position.y += (@block_size / 2) * (@action_proportion_remaining - 0.55)
+				# Decrement action step
+				@action_proportion_remaining -= action_proportion_this_frame
+		  # Action has been completed
+			if @action_proportion_remaining <= 0
 			  Utility.update_debug_info();
 			  # Round off vectors
 			  Utility.makeInteger(Player.right);
@@ -149,9 +150,8 @@ class Engine
 			    Utility.logVector("rght", Player.right);
 			    Utility.logVector("up", Player.up);
 			    Utility.logVector("fwd", Player.forward);
-			  # clear action status
-			  @action_status = null;
-			  @action_left = 0;
+			  # clear current action
+			  @current_action = null;
 
 		# Animate entities
 		for entity of @entities
