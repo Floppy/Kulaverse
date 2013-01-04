@@ -168,16 +168,16 @@ class Engine
 				if @debug
 					Utility.log(@current_action);				
 	
-	pickup: () ->
+	pickup: (entity) ->
 		# create the particle variables
 		particleCount = 50
 		particles = new THREE.Geometry()
-		pMaterial = new THREE.ParticleBasicMaterial({color: 0xFFFFFF, size: 0.1});
+		pMaterial = new THREE.ParticleBasicMaterial({color: entity.object.material.color.getHex(), size: 0.1});
 		# now create the individual particles
 		for n in [1..particleCount]
-			pX = Player.position.position.x + (Player.up.x*(@block_size/2+@ball_radius))
-			pY = Player.position.position.y + (Player.up.y*(@block_size/2+@ball_radius))
-			pZ = Player.position.position.z + (Player.up.z*(@block_size/2+@ball_radius))
+			pX = Player.current_block.x + (Player.up.x*(@block_size/2+@ball_radius))
+			pY = Player.current_block.y + (Player.up.y*(@block_size/2+@ball_radius))
+			pZ = Player.current_block.z + (Player.up.z*(@block_size/2+@ball_radius))
 			particle = new THREE.Vertex(
 				new THREE.Vector3(pX, pY, pZ)
 			)
@@ -224,7 +224,7 @@ class Engine
 			# collide will return true if we should remove the collided-with object and carry on
 			if @entities[entity].collide(Player.current_block, Player.current_surface)
 				# Fire pickup animation
-				this.pickup()
+				this.pickup(@entities[entity])
 				# Remove entity from array and scene
 				@entities[entity].removeFromScene(@scene);
 				@entities.splice(entity, 1);
