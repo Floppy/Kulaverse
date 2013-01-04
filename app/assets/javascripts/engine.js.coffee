@@ -186,6 +186,7 @@ class Engine
 			particles.vertices.push(particle)
 		# create the particle system
 		particleSystem = new THREE.ParticleSystem(particles, pMaterial)
+		particleSystem.age = 0
 		@particleSystems.push particleSystem
 		# add it to the scene
 		@scene.add particleSystem
@@ -208,11 +209,15 @@ class Engine
 
 		# Animate particle systems
 		for i of @particleSystems
+			@particleSystems[i].age += @ms_since_last_frame
 			for n in [0..49]
 				particle = @particleSystems[i].geometry.vertices[n]
 				particle.position.addSelf(particle.velocity);
 			@particleSystems[i].geometry.__dirtyVertices = true
-				
+			if @particleSystems[i].age > 1000
+				@scene.remove @particleSystems[i]
+				@particleSystems.splice(i, 1);
+				i -= 1;				
 
 		# Make ball breathe
 		ball_v_scale = (Math.sin(current_time/300) * 0.025);
