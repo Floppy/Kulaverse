@@ -21,7 +21,8 @@ class EntityPickup
 			particle = new THREE.Vertex(
 				new THREE.Vector3(pX, pY, pZ)
 			)
-			particle.velocity = new THREE.Vector3((Math.random() - 0.5)*0.05, (Math.random() - 0.5)*0.05, (Math.random() - 0.5)*0.05)
+			speed = 0.1
+			particle.velocity = new THREE.Vector3((Math.random() - 0.5)*speed , (Math.random() - 0.5)*speed , (Math.random() - 0.5)*speed )
 			# add it to the geometry
 			particles.vertices.push(particle)
 		# create the particle system
