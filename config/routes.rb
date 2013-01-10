@@ -16,7 +16,7 @@ Kulaverse::Application.routes.draw do
     end
   end
   
-  root :to => "worlds#show", :id => 1
+  root :to => "levels#index", :world_id => 1, :id => 1
 
   get "help/about"
 

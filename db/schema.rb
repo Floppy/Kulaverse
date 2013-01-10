@@ -11,15 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130110151733) do
+ActiveRecord::Schema.define(:version => 20130110152252) do
 
   create_table "levels", :force => true do |t|
-    t.timestamp "created_at", :null => false
-    t.timestamp "updated_at", :null => false
-    t.integer   "world_id"
-    t.text      "blocks"
-    t.text      "start"
-    t.text      "entities"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "world_num"
+    t.text     "blocks"
+    t.text     "start"
+    t.text     "entities"
+    t.integer  "level_num"
   end
 
   create_table "rails_admin_histories", :force => true do |t|
@@ -62,11 +63,5 @@ ActiveRecord::Schema.define(:version => 20130110151733) do
   end
 
   add_index "users", ["twitter_id"], :name => "index_users_on_twitter_id", :unique => true
-
-  create_table "worlds", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
 
 end

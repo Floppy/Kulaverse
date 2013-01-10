@@ -3,7 +3,10 @@
   </div>
   <div class="span1">
     <p>
-		  Level: <%= @level.id %>
+		  World: <%= @level.world_num %>
+    </p>
+    <p>
+		  Level: <%= @level.level_num %>
     </p>
     <p>
 		  Score: <span id='score'>0</span>
@@ -20,7 +23,7 @@
 <script>
     
 	// Initialise level data
-  Level.world = <%= @level.world.id %>;
+  Level.world = <%= @level.world_num %>;
 	Level.addBlocks(<%= @level.blocks.to_json %>);
 		
   // Position player

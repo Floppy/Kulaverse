@@ -1,14 +1,18 @@
 class LevelsController < ApplicationController
   before_filter :get_world
 
+  def index
+    @levels = Level.where(:world_num => @world).order(:level_num)
+  end
+
   def show
-    @level = @world.levels.find(params[:id])
+    @level = Level.where(:level_num => params[:id].to_i, :world_num => @world).first
   end
 
   protected
   
   def get_world
-    @world = World.find(params[:world_id])
+    @world = params[:world_id]
   end
 
 end
