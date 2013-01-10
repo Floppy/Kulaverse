@@ -36,10 +36,10 @@ RailsAdmin.config do |config|
 
   #  ==> Included models
   # Add all excluded models here:
-  # config.excluded_models = [Entity, Level, Theme, User]
+  # config.excluded_models = [Level, User]
 
   # Add models here if you want to go 'whitelist mode':
-  # config.included_models = [Entity, Level, Theme, User]
+  # config.included_models = [Level, User]
 
   # Application wide tried label methods for models' instances
   # config.label_methods << :description # Default is [:name, :title]
@@ -88,23 +88,6 @@ RailsAdmin.config do |config|
   #   # Found associations:
   #   # Found columns:
   #     configure :id, :integer 
-  #     configure :created_at, :datetime 
-  #     configure :updated_at, :datetime   #   # Sections:
-  #   list do; end
-  #   export do; end
-  #   show do; end
-  #   edit do; end
-  #   create do; end
-  #   update do; end
-  # end
-  # config.model Theme do
-  #   # Found associations:
-  #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :name, :string 
-  #     configure :texture_sky, :string 
-  #     configure :texture_block, :string 
-  #     configure :texture_ball, :string 
   #     configure :created_at, :datetime 
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end

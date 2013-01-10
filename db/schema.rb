@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130110144203) do
+ActiveRecord::Schema.define(:version => 20130110151733) do
 
   create_table "levels", :force => true do |t|
     t.timestamp "created_at", :null => false
@@ -46,15 +46,6 @@ ActiveRecord::Schema.define(:version => 20130110144203) do
   add_index "scores", ["level_id"], :name => "index_scores_on_level_id"
   add_index "scores", ["user_id"], :name => "index_scores_on_user_id"
 
-  create_table "themes", :force => true do |t|
-    t.string    "name"
-    t.string    "texture_sky"
-    t.string    "texture_block"
-    t.string    "texture_ball"
-    t.timestamp "created_at",    :null => false
-    t.timestamp "updated_at",    :null => false
-  end
-
   create_table "users", :force => true do |t|
     t.timestamp "remember_created_at"
     t.integer   "sign_in_count",       :default => 0
@@ -73,12 +64,9 @@ ActiveRecord::Schema.define(:version => 20130110144203) do
   add_index "users", ["twitter_id"], :name => "index_users_on_twitter_id", :unique => true
 
   create_table "worlds", :force => true do |t|
-    t.integer   "theme_id"
-    t.string    "name"
-    t.timestamp "created_at", :null => false
-    t.timestamp "updated_at", :null => false
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
-
-  add_index "worlds", ["theme_id"], :name => "index_worlds_on_theme_id"
 
 end
