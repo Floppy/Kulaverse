@@ -1,20 +1,18 @@
-class Entity
+class Coin
 	
 	constructor: () ->
-		@geometry_code = ""
-		@animate_code = ""
-		@collide_code = ""
 		@object = null
 		@position = new THREE.Vector3(0,0,0)
 		@frame = new THREE.Object3D()
 		@surface = "+Y"
-		@pickup = false
+		@pickup = true
 	
 	addToScene: (scene) ->
 		# Get geometry and material set up
-		eval @geometry_code
+		geometry = new THREE.CylinderGeometry(0.125, 0.125, 0.05, 32, 1, false )
+		material = new THREE.MeshLambertMaterial({color: 0xFDD017})
 		# Create mesh object
-		@object = new THREE.Mesh( geometry, material );
+		@object = new THREE.Mesh( geometry, material )
 		# Add to scene
 		@frame.add @object
 		scene.add @frame
@@ -38,17 +36,19 @@ class Entity
 		@object.position.y += 0.75;
 
 	animate: () ->
-		eval @animate_code
+		@object.eulerOrder = 'YXZ'
+		@object.rotation.y += 0.02
+		@object.rotation.x = Math.PI/2
 		
 	# should return true if the object is to be removed from the world
 	collide: (position, surface) ->
 		if position.equals(@position) && surface == @surface
-			eval @collide_code
-			# Return whether this item is a pickup or not
+			Level.addScore 100
+ 			# Return whether this item is a pickup or not
 			return @pickup
 		return false
 
 	removeFromScene: (scene) ->
 		scene.remove @frame
 
-window.Entity = Entity
+window.Coin = Coin
