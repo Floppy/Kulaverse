@@ -30,7 +30,7 @@ class Level
 		texture.minFilter = THREE.LinearFilter
 		texture.magFilter = THREE.NearestFilter
 		# Create material using texture
-		material = new THREE.MeshBasicMaterial(map: texture)
+		material = new THREE.MeshLambertMaterial(map: texture)
 		# Create blocks
 		for block of @block_list
 		  mesh = new THREE.Mesh(geometry, material)

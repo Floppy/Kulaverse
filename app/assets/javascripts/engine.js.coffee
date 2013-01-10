@@ -35,11 +35,31 @@ class Engine
 		Player.addToScene @scene
 		Level.addToScene  @scene
 		
+
+		ambient = new THREE.AmbientLight(0xAAAAAA)
+		@scene.add(ambient )		
+
+		directionalLight= new THREE.DirectionalLight(0x555555)
+		directionalLight.position.set(0, 1, 0).normalize()
+		@scene.add(directionalLight)		
+
+		directionalLight= new THREE.DirectionalLight(0x555555)
+		directionalLight.position.set(0, -1, 0).normalize()
+		@scene.add(directionalLight)		
+
+		directionalLight= new THREE.DirectionalLight(0xFFFFFF)
+		directionalLight.position.set(0, 0, 1).normalize()
+		@scene.add(directionalLight)		
+
+		directionalLight= new THREE.DirectionalLight(0xAAAAAA)
+		directionalLight.position.set(1, 0, 0).normalize()
+		@scene.add(directionalLight)		
+
 		# Create ball
 		texture           = THREE.ImageUtils.loadTexture(Level.ball_texture)
 		texture.minFilter = THREE.LinearFilter
 		texture.magFilter = THREE.NearestFilter
-		ball_material     = new THREE.MeshBasicMaterial({map: texture})
+		ball_material     = new THREE.MeshLambertMaterial({map: texture})
 		geometry          = new THREE.SphereGeometry(@ball_radius, 16, 16)
 		@ball             = new THREE.Mesh( geometry, ball_material )
 		@ball.position.y  = @block_size/2 + @ball_radius
