@@ -56,7 +56,7 @@ class Engine
 		@scene.add(directionalLight)		
 
 		# Create ball
-		texture           = THREE.ImageUtils.loadTexture(Level.ball_texture)
+		texture           = THREE.ImageUtils.loadTexture("/assets/worlds/#{Level.world}/ball.png")
 		texture.minFilter = THREE.LinearFilter
 		texture.magFilter = THREE.NearestFilter
 		ball_material     = new THREE.MeshLambertMaterial({map: texture})

@@ -2,13 +2,11 @@ class Level
 	
 	constructor: () ->
 		@block_list = {}
-		@block_texture = ""
 		@entities = []
-		@sky_texture = ""
-		@ball_texture = ""
 		@score = 0
 		@keys_required = 0
 		@keys_obtained = 0
+		@world = null
 		
 	addBlocks: (blocks) ->
 		this.addBlock block for block in blocks
@@ -18,7 +16,7 @@ class Level
 		
 	addToScene: (scene) ->
     # Add skybox
-		sky_material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture(@sky_texture))
+		sky_material = new THREE.MeshBasicMaterial(map: THREE.ImageUtils.loadTexture("/assets/worlds/#{@world}/sky.png"))
 		geometry = new THREE.SphereGeometry(18000, 16, 16)
 		sky = new THREE.Mesh( geometry, sky_material )
 		sky.scale.y = -1
@@ -26,7 +24,7 @@ class Level
 		# Create cube
 		geometry = new THREE.CubeGeometry(Engine.block_size, Engine.block_size, Engine.block_size)
 		# Set up texture
-		texture = THREE.ImageUtils.loadTexture(@block_texture)
+		texture = THREE.ImageUtils.loadTexture("/assets/worlds/#{@world}/block.png")
 		texture.minFilter = THREE.LinearFilter
 		texture.magFilter = THREE.NearestFilter
 		# Create material using texture

@@ -18,12 +18,10 @@
 
 <script src="http://mrdoob.github.com/three.js/examples/fonts/helvetiker_regular.typeface.js"></script>
 <script>
-  
+    
 	// Initialise level data
+  Level.world = <%= @level.world.id %>;
 	Level.addBlocks(<%= @level.blocks.to_json %>);
-	Level.block_texture = "<%= @level.theme.texture_block %>";
-  Level.sky_texture = "<%= @level.theme.texture_sky %>";
-  Level.ball_texture = "<%= @level.theme.texture_ball %>";
 		
   // Position player
   Player.start_at(<%=@level.start['position'][0]%>, <%=@level.start['position'][1]%>, <%=@level.start['position'][2]%>);
