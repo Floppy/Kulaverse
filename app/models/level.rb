@@ -12,12 +12,12 @@ class Level
   
   def self.where(options)
     if options[:level_num] && options[:world_num]
-      data = JSON.parse(File.read(File.join(Rails.root, 'app', 'levels', options[:world_num], "#{options[:level_num]}.json")))
+      data = JSON.parse(File.read(File.join(Rails.root, 'app', 'levels', options[:world_num].to_s, "#{options[:level_num]}.json")))
       data[:world_num] = options[:world_num]
       data[:level_num] = options[:level_num]
       [Level.new(data)]
     elsif options[:world_num]
-      Dir.glob(File.join(Rails.root, 'app', 'levels', options[:world_num], "*.json")).map do |x| 
+      Dir.glob(File.join(Rails.root, 'app', 'levels', options[:world_num].to_s, "*.json")).map do |x| 
         File.basename(x).split('.')[0].to_i
       end.sort
     else
