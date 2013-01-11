@@ -70,7 +70,7 @@
 	function levelComplete() {
 		if (Level.gotAllKeys() == true) {
 		  Utility.log("LEVEL COMPLETE");
-		  jQuery.ajax('<%= world_level_scores_path(@world, @level) %>',{
+		  jQuery.ajax('<%= world_level_scores_path(@level.world_num, @level.level_num) %>',{
 										type: 'POST',
 										data: {score: Level.score}
 									});
