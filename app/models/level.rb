@@ -17,9 +17,11 @@ class Level
       data[:level_num] = options[:level_num]
       [Level.new(data)]
     elsif options[:world_num]
-      
+      Dir.glob(File.join(Rails.root, 'app', 'levels', options[:world_num], "*.json")).map do |x| 
+        File.basename(x).split('.')[0].to_i
+      end.sort
     else
-      []
+      raise 'provide :world_num and optionally :level_num'
     end
   end
   

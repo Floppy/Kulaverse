@@ -2,7 +2,7 @@ class LevelsController < ApplicationController
   before_filter :get_world
 
   def index
-    @levels = Level.where(:world_num => @world).order(:level_num)
+    @levels = Level.where(:world_num => @world)
   end
 
   def show
