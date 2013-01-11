@@ -27,18 +27,32 @@
 	Level.addBlocks(<%= @level.blocks.to_json %>);
 		
   // Position player
-  Player.start_at(<%=@level.start['position'][0]%>, <%=@level.start['position'][1]%>, <%=@level.start['position'][2]%>);
+  Player.start_at(<%=@level.start['block'][0]%>, <%=@level.start['block'][1]%>, <%=@level.start['block'][2]%>);
     
+	// Load exit
+	exit = new Exit();
+	exit.surface = "<%= @level.exit['surface'] %>";
+	exit.position = new THREE.Vector3(<%= @level.exit['block'][0] %>, <%= @level.exit['block'][1] %>, <%= @level.exit['block'][2] %>);
+  Level.entities.push(exit);
+
+	// Load keys
+  <% @level.keys.each do |key| %>
+  	key = new Key();
+  	key.surface = "<%= key['surface'] %>";
+  	key.position = new THREE.Vector3(<%= key['block'][0] %>, <%= key['block'][1] %>, <%= key['block'][2] %>);
+    Level.entities.push(key);
+  <% end %>
+  // Update display now entities are loaded
+	Level.updateKeyDisplay();
+
 	// Load entities
 	<% @level.entities.each do |entity| %>
 		new_entity = new <%= entity['type'] %>();
 		new_entity.surface = "<%= entity['surface'] %>";
-		new_entity.position = new THREE.Vector3(<%= entity['position'][0] %>, <%= entity['position'][1] %>, <%= entity['position'][2] %>);
+		new_entity.position = new THREE.Vector3(<%= entity['block'][0] %>, <%= entity['block'][1] %>, <%= entity['block'][2] %>);
     Level.entities.push(new_entity);
 	<% end %>
 
-  // Update display now entities are loaded
-	Level.updateKeyDisplay();
 
   // Set up the engine
   Engine.init();
