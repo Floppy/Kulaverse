@@ -150,7 +150,7 @@ class Engine
 	detectUserInput: () ->
 		if @current_action == null
 			# Move forward
-			if @keyboard.pressed("up")
+			if @keyboard.pressed("up") || @keyboard.pressed("w")
 				# Are we jumping forward?
 				if @keyboard.pressed("space")
 					@current_action = "jump_forward"
@@ -171,13 +171,13 @@ class Engine
 						!Level.isBlockAt(Player.current_block.clone().subSelf(Player.right))
 			      @current_action = "change_plane_down";
 			# Turn left
-			else if @keyboard.pressed("left")
+			else if @keyboard.pressed("left") || @keyboard.pressed("a")
 			  @current_action = "turn_left";
 			# Turn right
-			else if @keyboard.pressed("right")
+			else if @keyboard.pressed("right") || @keyboard.pressed("d")
 			  @current_action = "turn_right";
 			# Turn around
-			else if @keyboard.pressed("down")
+			else if @keyboard.pressed("down") || @keyboard.pressed("s")
 			  @current_action = "turn_around";
 			# Jump in place
 			else if @keyboard.pressed("space")
