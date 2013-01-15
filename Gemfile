@@ -24,6 +24,7 @@ end
 group :development do
   gem 'powder'
   gem 'af'
+  gem 'caldecott'
 end
 
 group :development, :test do
@@ -36,7 +37,8 @@ end
 
 group :production do
   gem 'thin'
-  gem 'mysql2'
   gem 'cloudfoundry-jquery-rails'
   gem 'cloudfoundry-devise'
+  gem 'mysql2'
+  gem 'activerecord-mysql2-adapter'
 end
