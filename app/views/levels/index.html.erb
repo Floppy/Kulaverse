@@ -5,9 +5,9 @@
 <ul id='levels' class='unstyled'>
   <% @levels.each do |level| %>
   	<li>
-  		<% if current_user && current_user.completed_levels.include?(level) %>
+  		<% if current_user && current_user.completed_level?(@world, level) %>
       <%= link_to "<i class='icon-play-circle icon-white'></i> Level #{level}".html_safe, world_level_path(@world, level), :class => 'btn btn-success' %>
-  			<%= current_user.scores.where(:level_id => level).first.score %>
+  			<%= current_user.scores.where(:level_num => level, :world_num => @world).first.score %>
   		<% else %>
   			<%= link_to "<i class='icon-play-circle icon-white'></i> Level #{level}".html_safe, world_level_path(@world, level), :class => 'btn btn-danger' %>
   		<% end %>

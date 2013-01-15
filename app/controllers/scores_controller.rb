@@ -6,14 +6,14 @@ class ScoresController < ApplicationController
     # If user isn't logged in, just carry on without storing anything
     return if current_user.nil?
     # Find existing score
-    @score = current_user.scores.where(:level_id => params[:level_id]).first
+    @score = current_user.scores.where(:level_num => params[:level_id], :world_num => params[:world_id]).first
     if @score
       # Update score if higher
       @score.score = new_score if new_score > @score.score
       @score.save
     else
       # Create a new score record
-      Score.create(:level_id => params[:level_id], :user => current_user, :score => new_score)
+      Score.create(:level_num => params[:level_id], :world_num => params[:world_id], :user => current_user, :score => new_score)
     end
   end
 

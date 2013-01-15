@@ -1,7 +1,6 @@
 class User < ActiveRecord::Base
 
   has_many :scores
-  has_many :completed_levels, :through => :scores, :source => :level
 
   devise :omniauthable, :registerable, :rememberable, :trackable
 
@@ -20,4 +19,8 @@ class User < ActiveRecord::Base
     user
   end
 
+  def completed_level?(world, level)
+    scores.where(:level_num => level, :world_num => world).first.present?
+  end
+  
 end
