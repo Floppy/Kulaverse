@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130115112048) do
+ActiveRecord::Schema.define(:version => 20130115112729) do
 
   create_table "rails_admin_histories", :force => true do |t|
     t.text      "message"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20130115112048) do
 
   add_index "scores", ["level_num"], :name => "index_scores_on_level_id"
   add_index "scores", ["user_id"], :name => "index_scores_on_user_id"
+  add_index "scores", ["world_num"], :name => "index_scores_on_world_num"
 
   create_table "users", :force => true do |t|
     t.timestamp "remember_created_at"
