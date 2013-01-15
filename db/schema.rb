@@ -11,17 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130111232356) do
-
-  create_table "levels", :force => true do |t|
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-    t.integer  "world_num"
-    t.text     "blocks"
-    t.text     "start"
-    t.text     "entities"
-    t.integer  "level_num"
-  end
+ActiveRecord::Schema.define(:version => 20130115112048) do
 
   create_table "rails_admin_histories", :force => true do |t|
     t.text      "message"
