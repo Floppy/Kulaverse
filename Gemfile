@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 gem 'rails', '~> 3.2'
 
 gem 'json'
-gem 'devise'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem 'bootstrap-sass'
@@ -22,8 +21,6 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails'
-
 group :development do
   gem 'powder'
   gem 'af'
@@ -33,8 +30,13 @@ group :development, :test do
   gem 'sqlite3'
   gem 'jasminerice'
   gem 'rspec-rails'
+  gem 'jquery-rails'
+  gem 'devise'
 end
 
 group :production do
+  gem 'thin'
   gem 'mysql2'
+  gem 'cloudfoundry-jquery-rails'
+  gem 'cloudfoundry-devise'
 end
