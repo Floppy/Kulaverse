@@ -26,7 +26,7 @@ gem 'jquery-rails'
 
 group :development do
   gem 'powder'
-  gem 'heroku'
+  gem 'af'
 end
 
 group :development, :test do
@@ -36,5 +36,5 @@ group :development, :test do
 end
 
 group :production do
-  gem 'pg'
+  gem 'mysql'
 end
