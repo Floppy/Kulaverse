@@ -6,10 +6,12 @@
   <% @levels.each do |level| %>
   	<li>
   		<% if current_user && current_user.completed_level?(@world, level) %>
-      <%= link_to "<i class='icon-play-circle icon-white'></i> Level #{level}".html_safe, world_level_path(@world, level), :class => 'btn btn-success' %>
+        <%= link_to "<i class='icon-play-circle icon-white'></i> Level #{level}".html_safe, world_level_path(@world, level), :class => 'btn btn-success' %>
   			<%= current_user.scores.where(:level_num => level, :world_num => @world).first.score %>
+  		<% elsif (level==1) || (current_user && current_user.completed_level?(@world, level-1)) %>
+  			<%= link_to "<i class='icon-play-circle icon-white'></i> Level #{level}".html_safe, world_level_path(@world, level), :class => 'btn btn-primary' %>
   		<% else %>
-  			<%= link_to "<i class='icon-play-circle icon-white'></i> Level #{level}".html_safe, world_level_path(@world, level), :class => 'btn btn-danger' %>
+  			<%= link_to "<i class='icon-lock'></i> Level #{level}".html_safe, '#', :class => 'btn btn-disabled' %>
   		<% end %>
   	</li>
   <% end %>
