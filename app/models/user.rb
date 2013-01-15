@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
 
   attr_accessible :name, :twitter_id, :facebook_id, :remember_me, :avatar_url
 
+  attr_accessor :email #not stored , just to make devise happy
+
   def self.find_for_twitter_oauth(access_token, signed_in_resource=nil)
     data = access_token.extra.raw_info
     user = User.where(:twitter_id => data.id).first || User.create!(:twitter_id => data.id)
