@@ -3,11 +3,13 @@ source 'https://rubygems.org'
 gem 'rails', '~> 3.2'
 
 gem 'json'
+gem 'devise'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem 'bootstrap-sass'
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
 gem 'high_voltage'
+gem 'jquery-rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -31,14 +33,9 @@ group :development, :test do
   gem 'sqlite3'
   gem 'jasminerice'
   gem 'rspec-rails'
-  gem 'jquery-rails'
-  gem 'devise'
 end
 
 group :production do
   gem 'thin'
-  gem 'cloudfoundry-jquery-rails'
-  gem 'cloudfoundry-devise', :require => 'devise'
   gem 'mysql2'
-  gem 'activerecord-mysql2-adapter'
 end
