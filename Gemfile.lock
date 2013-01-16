@@ -235,7 +235,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-twitter
   powder
-  rails (~> 3.2)
+  rails (~> 3.2.11)
   rails_admin!
   rspec-rails
   sass-rails (~> 3.2)
