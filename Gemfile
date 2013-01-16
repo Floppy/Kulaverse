@@ -38,7 +38,7 @@ end
 group :production do
   gem 'thin'
   gem 'cloudfoundry-jquery-rails'
-  gem 'cloudfoundry-devise'
+  gem 'cloudfoundry-devise', :require => 'devise'
   gem 'mysql2'
   gem 'activerecord-mysql2-adapter'
 end
