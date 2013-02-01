@@ -19,3 +19,4 @@ config/facebook.yml
 /.DS_Store
 /vendor/cache/
 /public/assets/
+/.powrc
