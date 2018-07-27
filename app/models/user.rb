@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
 
   devise :omniauthable, :registerable, :rememberable, :trackable
 
-  attr_accessible :name, :twitter_id, :facebook_id, :remember_me, :avatar_url
+  attr_accessor :name, :twitter_id, :facebook_id, :remember_me, :avatar_url
 
   attr_accessor :email #not stored , just to make devise happy
 

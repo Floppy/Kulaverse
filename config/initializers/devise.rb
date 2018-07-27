@@ -9,9 +9,6 @@ Devise.setup do |config|
   # Configure the class responsible to send e-mails.
   # config.mailer = "Devise::Mailer"
 
-  # Automatically apply schema changes in tableless databases
-  config.apply_schema = false
-
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and
   # :mongoid (bson_ext recommended) by default. Other ORMs may be
@@ -111,10 +108,6 @@ Devise.setup do |config|
   # If true, extends the user's remember period when remembered via cookie.
   # config.extend_remember_period = false
 
-  # If true, uses the password salt as remember token. This should be turned
-  # to false if you are not using database authenticatable.
-  config.use_salt_as_remember_token = true
-
   # Options to be passed to the created cookie. For instance, you can set
   # :secure => true in order to force SSL only cookies.
   # config.cookie_options = {}
@@ -212,7 +205,8 @@ Devise.setup do |config|
   # up on your models and hooks.
   config.omniauth :twitter, $twitter_consumer_key, $twitter_consumer_secret
   config.omniauth :facebook, $facebook_consumer_key, $facebook_consumer_secret
-  
+
+  config.secret_key = 'fe927ac62ca4275cc9406b3d4b318708d2e6b772de39daae778e7b9d98f8692f409745ad86a55b4f09b9a764ce2f4703e52c88f8c8ea04739d7f89db717417cf'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

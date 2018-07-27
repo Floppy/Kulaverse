@@ -20,3 +20,4 @@ config/facebook.yml
 /vendor/cache/
 /public/assets/
 /.powrc
+/.idea
