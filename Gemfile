@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.22'
+gem 'rails', '~> 4.2.11'
 
 gem 'json'
 gem 'devise'
@@ -14,8 +14,8 @@ gem 'jquery-rails'
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails',   '~> 3.2'
-  gem 'coffee-rails', '~> 3.2'
+  gem 'sass-rails',   '~> 6.0'
+  gem 'coffee-rails', '~> 4.2'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer'
