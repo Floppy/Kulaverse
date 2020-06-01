@@ -249,7 +249,7 @@ GEM
     rake (13.0.1)
     rb-readline (0.4.2)
     remotipart (1.4.4)
-    responders (3.0.0)
+    responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
     rest-client (1.6.14)
