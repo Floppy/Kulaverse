@@ -140,7 +140,7 @@ GEM
       railties (>= 3.2.16)
     json (1.6.8)
     json_pure (1.6.8)
-    jwt (2.2.1)
+    jwt (2.2.2)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
